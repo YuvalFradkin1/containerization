@@ -184,8 +184,8 @@ struct SymlinkContainmentBypassTests {
         let store1 = try LocalContentStore(path: extractDir1)
         let store2 = try LocalContentStore(path: extractDir2)
 
-        let sc1 = try store1.get(digest: digest)
-        let sc2 = try store2.get(digest: digest2)
+        let sc1 = try await store1.get(digest: digest)
+        let sc2 = try await store2.get(digest: digest2)
 
         #expect(sc1 != nil, "LocalContentStore.get() must find blob at symlink path")
         #expect(sc2 != nil, "LocalContentStore.get() must find /etc/hosts blob")
