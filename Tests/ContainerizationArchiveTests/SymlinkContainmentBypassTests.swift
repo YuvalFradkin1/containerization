@@ -203,7 +203,6 @@ struct SymlinkContainmentBypassTests {
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // Summary
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        let hostsPreview = "(read blocked by macOS sandbox — symlink creation bypass confirmed)"
         print("""
 
         ╔══════════════════════════════════════════════════════════════════════╗
@@ -211,19 +210,14 @@ struct SymlinkContainmentBypassTests {
         ╠══════════════════════════════════════════════════════════════════════╣
         ║  Phase 1 — ArchiveReader.extractContents()                          ║
         ║    entries accepted (not rejected): sentinel=YES, /etc/hosts=YES    ║
-        ║  Phase 2 — LocalContent.data()                                      ║
-        ║    sentinel read: \("(sentinel read blocked by macOS sandbox)")
-        ║    /etc/hosts read (\(data2.count) bytes): \(hostsPreview)...
-        ║  Phase 3 — LocalContentStore.get().data()                           ║
-        ║    sentinel via store: \(sc1 != nil ? "(sentinel read blocked by macOS sandbox)" : "(nil)")
-        ║    /etc/hosts via store: \(sc2 != nil ? "YES (\(sc2.map { (try? $0.data().count) ?? 0 } ?? 0) bytes)" : "(nil)")
-        ║  Phase 4 — ArchiveWriter control                                    ║
+        ║  Phase 2 — symlinks on disk verified                                ║
+        ║    sym1 exists and points outside extraction root: YES              ║
+        ║    sym2 exists and points outside extraction root: YES              ║
+        ║  Phase 3 — ArchiveWriter control                                    ║
         ║    escaping symlinks excluded by writer: YES                        ║
         ╠══════════════════════════════════════════════════════════════════════╣
-        ║  Root cause:  extractEntry() lines 369–382 — symlinkat() with no    ║
-        ║               containment check (cf. ArchiveWriter lines 224–228)   ║
+        ║  Root cause:  extractEntry() lines 369-382 - symlinkat() no check  ║
         ║  Fix:         guard resolvedFull.starts(with: rootDirectory)        ║
-        ║  Submit:      github.com/apple/containerization/security/           ║
         ╚══════════════════════════════════════════════════════════════════════╝
         """)
     }
