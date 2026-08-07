@@ -32,6 +32,7 @@ jobs:
       - name: Run PoC
         run: |
           swift test \
+            --test-product ContainerizationArchiveTests \
             --filter "SymlinkContainmentBypassTests/symlinkContainmentBypass" \
             --verbose \
             2>&1 | tee poc_output.txt
