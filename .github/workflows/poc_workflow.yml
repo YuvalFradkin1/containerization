@@ -1,29 +1,3 @@
-# PoC Workflow: apple/containerization — Symlink Containment Bypass
-# CWE-61 / ArchiveReader.extractEntry() lines 369–382
-# Commit: 2ec221af5af45c156688bba323cc733f9f49c840 (2026-08-06)
-#
-# PREREQUISITES (fork setup — one-time, done before running)
-# ──────────────────────────────────────────────────────────
-# 1. Fork apple/containerization to your GitHub account
-# 2. In the fork, apply Package.swift.patch (adds ContainerizationOCI to test deps)
-# 3. Copy SymlinkContainmentBypassTests.swift to Tests/ContainerizationArchiveTests/
-# 4. Add this file to .github/workflows/poc_workflow.yml
-# 5. Push — or trigger manually via Actions → Run workflow
-#
-# All source files come from the FORK — no cp from external paths.
-#
-# WHAT THIS PROVES
-# ────────────────
-# Layer 2: real Swift runtime on macOS, real apple/containerization types.
-# Layer 1 (Ubuntu): RUN_POC.sh and L1 files (poc_real.c, create_malicious_tar.py,
-# archive.h, archive_entry.h) are at the repository root — no poc/ subdirectory.
-#
-# Apple types used in the Swift test:
-#   ArchiveReader.extractContents(to:)      ← the vulnerable function
-#   ArchiveWriter.archiveDirectory()        ← proves writer excludes the entry
-#   LocalContent(path:) + .data()           ← exact LocalContent.swift consumer
-#   LocalContentStore(path:).get(digest:)   ← exact LocalContentStore.swift chain
-
 name: PoC — Symlink Containment Bypass
 
 on:
@@ -34,21 +8,13 @@ on:
       - '.github/workflows/poc_workflow.yml'
 
 jobs:
-  # ── Layer 2: real ArchiveReader + LocalContent on macOS ──────────────────
   poc-swift-macos:
     name: "L2 — real ArchiveReader + LocalContent (macOS)"
-    # apple/containerization requires macOS 15.0+ (Package.swift platform constraint).
-    # macos-15 = Sequoia, the current macOS 15.x runner.
-    # For macOS 26 (Tahoe) runners, change to: macos-latest (when available).
-    runs-on: macos-15
+    runs-on: macos-latest
 
     steps:
-      - name: Checkout fork (contains test file + Package.swift patch)
+      - name: Checkout fork
         uses: actions/checkout@v4
-        # No 'repository:' override — checks out THIS fork.
-        # The fork already contains:
-        #   Tests/ContainerizationArchiveTests/SymlinkContainmentBypassTests.swift
-        #   Package.swift (with ContainerizationOCI added to test deps)
 
       - name: Show Swift version
         run: swift --version
@@ -63,28 +29,25 @@ jobs:
             --target ContainerizationOCI \
             2>&1
 
-      - name: Run PoC — real ArchiveReader.extractContents() + real LocalContent
-        id: poc_run
+      - name: Run PoC
         run: |
           swift test \
             --filter "SymlinkContainmentBypassTests/symlinkContainmentBypass" \
             --verbose \
             2>&1 | tee poc_output.txt
 
-      - name: Assert [PASS] in output
+      - name: Assert PASS
         run: |
           grep "\[PASS\] SymlinkContainmentBypass" poc_output.txt && \
-            echo "✅  Layer 2 PASS: symlink containment bypass confirmed on real apple/containerization" || \
-            { echo "❌  Expected [PASS] not found"; exit 1; }
+            echo "✅ L2 PASS" || { echo "❌ PASS not found"; exit 1; }
 
-      - name: Upload test output
+      - name: Upload output
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: poc-output-macos
           path: poc_output.txt
 
-  # ── Layer 1: real libarchive on Ubuntu (no Swift required) ───────────────
   poc-libarchive-ubuntu:
     name: "L1 — real libarchive + symlinkat (Ubuntu)"
     runs-on: ubuntu-24.04
@@ -93,7 +56,7 @@ jobs:
       - name: Checkout fork
         uses: actions/checkout@v4
 
-      - name: Install libarchive runtime
+      - name: Install libarchive
         run: sudo apt-get install -y libarchive13
 
       - name: Compile C PoC
@@ -101,7 +64,6 @@ jobs:
           gcc -I. -o poc_real poc_real.c \
             /usr/lib/x86_64-linux-gnu/libarchive.so.13 \
             -Wl,-rpath,/usr/lib/x86_64-linux-gnu
-          echo "Compiled successfully."
 
       - name: Run C PoC
         run: |
@@ -110,11 +72,9 @@ jobs:
             --output malicious_oci.tar
           mkdir /tmp/poc_extract
           ./poc_real malicious_oci.tar /tmp/poc_extract | tee poc_output.txt
-          grep "\[PASS\]" poc_output.txt && \
-            echo "✅  Layer 1 PASS: symlinkat bypass confirmed on real libarchive" || \
-            { echo "❌  Expected [PASS] not found"; exit 1; }
+          grep "\[PASS\]" poc_output.txt && echo "✅ L1 PASS" || { echo "❌ FAIL"; exit 1; }
 
-      - name: Upload test output
+      - name: Upload output
         if: always()
         uses: actions/upload-artifact@v4
         with:
