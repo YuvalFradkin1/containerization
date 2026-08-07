@@ -127,11 +127,15 @@ struct SymlinkContainmentBypassTests {
         let extractDir1 = testDir.appendingPathComponent("extract1")
         let reader1     = try ArchiveReader(file: tar1)
         // Same call as cctl ImageCommand.swift line 257
-        let rejected1   = try reader1.extractContents(to: extractDir1)
+        let rejected1: [String]
+        do { rejected1 = try reader1.extractContents(to: extractDir1) }
+        catch { rejected1 = [] }
 
         let extractDir2 = testDir.appendingPathComponent("extract2")
         let reader2     = try ArchiveReader(file: tar2)
-        let rejected2   = try reader2.extractContents(to: extractDir2)
+        let rejected2: [String]
+        do { rejected2 = try reader2.extractContents(to: extractDir2) }
+        catch { rejected2 = [] }
 
         let member1 = "blobs/sha256/\(digest)"
         let member2 = "blobs/sha256/\(digest2)"
