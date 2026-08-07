@@ -90,9 +90,9 @@ struct SymlinkContainmentBypassTests {
     @Test func symlinkContainmentBypass() async throws {
         let fm = FileManager.default
 
-        guard let testDir = createTemporaryDirectory(baseName: "PoC.symlinkBypass") else {
-            Issue.record("createTemporaryDirectory returned nil"); return
-        }
+        let testDir = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("PoC.symlinkBypass.\(ProcessInfo.processInfo.processIdentifier)")
+        try fm.createDirectory(at: testDir, withIntermediateDirectories: true)
         defer { try? fm.removeItem(at: testDir) }
 
         // Digest used as blob filename in LocalContentStore._blobPath
