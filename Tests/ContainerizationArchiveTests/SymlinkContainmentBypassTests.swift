@@ -118,15 +118,13 @@ struct SymlinkContainmentBypassTests {
 
         let extractDir1 = testDir.appendingPathComponent("extract1")
         let reader1     = try ArchiveReader(file: tar1)
-        let rejected1: [String]
-        do { rejected1 = try reader1.extractContents(to: extractDir1) }
-        catch { rejected1 = []; print("[PoC] extractContents(tar1) error: \(error)") }
+        do { _ = try reader1.extractContents(to: extractDir1) }
+        catch { print("[PoC] extractContents(tar1) error: \(error)") }
 
         let extractDir2 = testDir.appendingPathComponent("extract2")
         let reader2     = try ArchiveReader(file: tar2)
-        let rejected2: [String]
-        do { rejected2 = try reader2.extractContents(to: extractDir2) }
-        catch { rejected2 = []; print("[PoC] extractContents(tar2) error: \(error)") }
+        do { _ = try reader2.extractContents(to: extractDir2) }
+        catch { print("[PoC] extractContents(tar2) error: \(error)") }
 
         let member1 = "blobs/sha256/\(digest)"
         let member2 = "blobs/sha256/\(digest2)"
@@ -134,7 +132,7 @@ struct SymlinkContainmentBypassTests {
         let sym2URL = extractDir2.appendingPathComponent(member2)
 
         #expect(fm.fileExists(atPath: sym1URL.path),
-                "extractContents() created escaping symlink — no containment check in reader")
+                "extractContents() created escaping symlink — ho containment check in reader")
         #expect(fm.fileExists(atPath: sym2URL.path),
                 "extractContents() created /etc/hosts symlink — no containment check in reader")
 
