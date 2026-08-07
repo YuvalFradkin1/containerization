@@ -149,12 +149,12 @@ struct SymlinkContainmentBypassTests {
                 "extractContents() accepted /etc/hosts entry — no containment check in reader")
 
         // Assertion B: symlinks on disk have escaping absolute targets
-        let target1 = try fm.destinationOfSymbolicLink(atPath: sym1URL.path)
-        let target2 = try fm.destinationOfSymbolicLink(atPath: sym2URL.path)
+        let target1 = try? fm.destinationOfSymbolicLink(atPath: sym1URL.path)
+        let target2 = try? fm.destinationOfSymbolicLink(atPath: sym2URL.path)
         #expect(target1 == sentinelURL.path,  "symlink 1 must point to sentinel path")
         #expect(target2 == hostFile.path,     "symlink 2 must point to /etc/hosts")
-        #expect(!sentinelURL.path.hasPrefix(extractDir1.path), "sentinel outside extractDir1")
-        #expect(!hostFile.path.hasPrefix(extractDir2.path),    "/etc/hosts outside extractDir2")
+        #expect(target1.map { !$0.hasPrefix(extractDir1.path) } ?? false, "sentinel outside extractDir1")
+        #expect(target2.map { !$0.hasPrefix(extractDir2.path) } ?? false, "/etc/hosts outside extractDir2")
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // PHASE 2: real LocalContent.data() — exact LocalContent.swift consumer
