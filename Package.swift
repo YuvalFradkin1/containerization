@@ -149,7 +149,8 @@ let package = Package(
         .testTarget(
             name: "ContainerizationArchiveTests",
             dependencies: [
-                "ContainerizationArchive"
+                "ContainerizationArchive",
+                "ContainerizationOCI"
             ],
             resources: [
                 .copy("Resources/test.tar.zst")
