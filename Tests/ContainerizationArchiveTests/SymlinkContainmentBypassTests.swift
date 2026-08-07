@@ -142,11 +142,12 @@ struct SymlinkContainmentBypassTests {
         let sym1URL = extractDir1.appendingPathComponent(member1)
         let sym2URL = extractDir2.appendingPathComponent(member2)
 
-        // Assertion A: entries accepted (not in rejectedPaths)
-        #expect(!rejected1.contains(member1),
-                "extractContents() accepted sentinel entry — no containment check in reader")
-        #expect(!rejected2.contains(member2),
-                "extractContents() accepted /etc/hosts entry — no containment check in reader")
+        // Assertion A: symlinks created on disk proves extractContents() processed the entries
+        // extractContents() errors on post-symlink cleanup (EACCES unlink) but symlinks ARE created
+        #expect(fm.fileExists(atPath: sym1URL.path),
+                "extractContents() created escaping symlink — no containment check in reader")
+        #expect(fm.fileExists(atPath: sym2URL.path),
+                "extractContents() created /etc/hosts symlink — no containment check in reader")
 
         // Assertion B: symlinks on disk have escaping absolute targets
         let target1 = try? fm.destinationOfSymbolicLink(atPath: sym1URL.path)
