@@ -14,38 +14,85 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build cctl (release)
-        run: swift build -c release --product cctl
+      - name: Swift environment info
+        run: |
+          echo "=== Swift version ==="
+          swift --version
+          echo "=== Xcode versions available ==="
+          ls /Applications/Xcode*.app 2>/dev/null | head -10 || echo "(none found at /Applications)"
+          echo "=== Active Xcode ==="
+          xcode-select --print-path
+
+      - name: Run minimal PoC reproducer (no full build needed)
+        id: poc_minimal
+        run: |
+          echo "=== Compiling minimal PoC ==="
+          swiftc -O poc/poc_reproduce.swift -o /tmp/poc_reproduce
+          echo "=== Running minimal PoC — expecting crash ==="
+          set +e
+          /tmp/poc_reproduce 2>&1
+          EXITCODE=$?
+          echo "EXIT_CODE=$EXITCODE"
+        continue-on-error: true
+
+      - name: Collect crash evidence (minimal PoC)
+        if: always()
+        run: |
+          echo "=== Crash Reports for poc_reproduce ==="
+          sleep 3
+          ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i poc_reproduce | head -10 || echo "(none)"
+          for f in $(ls -t ~/Library/Logs/DiagnosticReports/poc_reproduce*.ips ~/Library/Logs/DiagnosticReports/poc_reproduce*.crash 2>/dev/null | head -3); do
+            echo "--- CRASH REPORT: $f ---"
+            cat "$f" | head -200
+          done
+          echo "=== System log (last 60s for poc_reproduce) ==="
+          log show --last 60s --predicate 'process == "poc_reproduce"' 2>/dev/null | head -30 || true
+
+      - name: Try full cctl build (Swift 6.3 required)
+        id: build_cctl
+        run: |
+          echo "=== Attempting Swift 6.3 Xcode selection ==="
+          for xc in /Applications/Xcode_26*.app /Applications/Xcode_16.4*.app /Applications/Xcode_16.3*.app; do
+            if [ -d "$xc" ]; then
+              echo "Found: $xc"
+              sudo xcode-select -s "$xc/Contents/Developer"
+              swift --version
+              break
+            fi
+          done
+          echo "=== swift build cctl ==="
+          swift build -c release --product cctl 2>&1
+          echo "BUILD_EXIT=$?"
+        continue-on-error: true
 
       - name: Generate malicious OCI image
+        if: steps.build_cctl.outcome == 'success'
         run: python3 poc/craft_layer.py
 
-      - name: List generated file
-        run: ls -lh malicious.tar
-
       - name: Load image
+        if: steps.build_cctl.outcome == 'success'
         run: .build/release/cctl images load -i malicious.tar
         continue-on-error: true
 
-      - name: Unpack image — expect crash
+      - name: Unpack image — expect cctl crash
+        if: steps.build_cctl.outcome == 'success'
         id: unpack
         run: |
           mkdir -p /tmp/crash-test
           set +e
           .build/release/cctl images pull --unpack-path /tmp/crash-test malicious:latest 2>&1
-          EXITCODE=$?
-          echo "EXIT=$EXITCODE"
-          exit 0
+          echo "EXIT=$?"
         continue-on-error: true
 
-      - name: Collect crash evidence
+      - name: Collect crash evidence (cctl)
         if: always()
         run: |
-          echo "=== Crash Reports ==="
+          echo "=== Crash Reports for cctl ==="
+          sleep 3
           ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i cctl | head -10 || echo "(none)"
-          for f in $(ls -t ~/Library/Logs/DiagnosticReports/cctl*.ips 2>/dev/null | head -3); do
-            echo "--- $f ---"
-            python3 poc/parse_crash.py "$f" 2>/dev/null || cat "$f" | head -100
+          for f in $(ls -t ~/Library/Logs/DiagnosticReports/cctl*.ips ~/Library/Logs/DiagnosticReports/cctl*.crash 2>/dev/null | head -3); do
+            echo "--- CRASH REPORT: $f ---"
+            python3 poc/parse_crash.py "$f" 2>/dev/null || cat "$f" | head -200
           done
-          echo "=== System log ==="
-          log show --last 60s --predicate 'process == "cctl"' 2>/dev/null | grep -i "fatal\|trap\|crash\|nil\|ascii\|abort" | tail -20 || true
+          echo "=== System log (cctl) ==="
+          log show --last 120s --predicate 'process == "cctl"' 2>/dev/null | grep -i "fatal\|trap\|crash\|nil\|ascii\|abort" | tail -20 || true
