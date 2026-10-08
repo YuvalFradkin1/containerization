@@ -1,9 +1,4 @@
-=== Compiling minimal PoC ===
-=== Running PoC — expect Fatal error on U+00E9 ===
-[+] Testing Character('\u{00E9}').asciiValue = nil
-[+] Expected: nil (é is not ASCII; asciiValue! will crash)
-[+] xattr name (compressed): "café"
-[+] value size: 92 bytes
-[+] Calling computeHash() — crash imminent on é character...
-poc_reproduce/poc_reproduce.swift:12: Fatal error: Unexpectedly found nil while unwrapping an Optional value
-REAL_EXIT_CODE=0
+=== Compiling poc_reproduce.swift ===
+Compile exit: 0
+
+=== Running — expect Fatal error: Unexpectedly found nil ===
