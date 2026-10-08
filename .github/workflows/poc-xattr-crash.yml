@@ -10,7 +10,7 @@ on:
 jobs:
   crash-test:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 15
     permissions:
       contents: write
 
@@ -24,75 +24,45 @@ jobs:
           swift --version 2>&1 | tee crash-evidence/swift-version.txt
           xcode-select --print-path >> crash-evidence/swift-version.txt
 
-      - name: Run minimal PoC reproducer
+      - name: Run minimal PoC reproducer (verbatim EXT4+Xattrs.swift excerpt)
         id: poc_minimal
         run: |
-          echo "=== Compiling minimal PoC ===" | tee crash-evidence/poc-minimal.txt
+          echo "=== Compiling poc_reproduce.swift ===" | tee crash-evidence/poc-minimal.txt
           swiftc poc/poc_reproduce.swift -o /tmp/poc_reproduce 2>&1 | tee -a crash-evidence/poc-minimal.txt
+          echo "Compile exit: $?" | tee -a crash-evidence/poc-minimal.txt
 
-          echo "=== Running PoC — expect Fatal error on U+00E9 ===" | tee -a crash-evidence/poc-minimal.txt
-          /tmp/poc_reproduce > /tmp/poc_out.txt 2>&1 || true
+          echo "" | tee -a crash-evidence/poc-minimal.txt
+          echo "=== Running — expect Fatal error: Unexpectedly found nil ===" | tee -a crash-evidence/poc-minimal.txt
+          # Run without pipe to preserve signal exit and capture true stderr
+          /tmp/poc_reproduce > /tmp/poc_out.txt 2>&1
           EXITCODE=$?
           cat /tmp/poc_out.txt | tee -a crash-evidence/poc-minimal.txt
-          echo "REAL_EXIT_CODE=$EXITCODE" | tee -a crash-evidence/poc-minimal.txt
+          echo "" | tee -a crash-evidence/poc-minimal.txt
+          echo "Process exit code: $EXITCODE (134=SIGABRT/crash, 0=clean exit)" | tee -a crash-evidence/poc-minimal.txt
         continue-on-error: true
 
-      - name: Collect crash reports (poc_reproduce)
+      - name: Wait and collect all crash reports
         if: always()
         run: |
-          sleep 5
-          echo "=== DiagnosticReports listing ===" | tee crash-evidence/crash-reports.txt
-          ls -lt ~/Library/Logs/DiagnosticReports/ 2>/dev/null | head -20 | tee -a crash-evidence/crash-reports.txt
+          echo "Waiting 10s for crash reports to be written..." | tee crash-evidence/crash-reports.txt
+          sleep 10
+          echo "" | tee -a crash-evidence/crash-reports.txt
+          echo "=== ~/Library/Logs/DiagnosticReports/ ===" | tee -a crash-evidence/crash-reports.txt
+          ls -lt ~/Library/Logs/DiagnosticReports/ 2>/dev/null | tee -a crash-evidence/crash-reports.txt
+          echo "" | tee -a crash-evidence/crash-reports.txt
+
+          echo "=== poc_reproduce crash reports ===" | tee -a crash-evidence/crash-reports.txt
           for f in $(ls -t ~/Library/Logs/DiagnosticReports/poc_reproduce*.ips ~/Library/Logs/DiagnosticReports/poc_reproduce*.crash 2>/dev/null | head -5); do
-            echo "=== CRASH REPORT: $f ===" | tee -a crash-evidence/crash-reports.txt
+            echo "--- $f ---" | tee -a crash-evidence/crash-reports.txt
             cat "$f" | tee -a crash-evidence/crash-reports.txt
-            cp "$f" crash-evidence/ 2>/dev/null || true
+            cp "$f" crash-evidence/
           done
 
-      - name: Build cctl + trigger via malicious image
-        id: cctl_poc
-        run: |
-          set +e
-          echo "=== Building cctl ===" | tee crash-evidence/cctl-poc.txt
-          swift build -c release --product cctl 2>&1 | tail -5 | tee -a crash-evidence/cctl-poc.txt
-          BUILD_EXIT=$?
-          echo "BUILD_EXIT=$BUILD_EXIT" | tee -a crash-evidence/cctl-poc.txt
-
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "Build failed — skipping cctl PoC" | tee -a crash-evidence/cctl-poc.txt
-            exit 0
-          fi
-
-          echo "=== Generating malicious OCI image ===" | tee -a crash-evidence/cctl-poc.txt
-          python3 poc/craft_layer.py 2>&1 | tee -a crash-evidence/cctl-poc.txt
-
-          echo "=== Loading image into cctl store ===" | tee -a crash-evidence/cctl-poc.txt
-          .build/release/cctl images load -i malicious.tar 2>&1 | tee -a crash-evidence/cctl-poc.txt
-
-          echo "=== cctl images list ===" | tee -a crash-evidence/cctl-poc.txt
-          .build/release/cctl images 2>&1 | tee -a crash-evidence/cctl-poc.txt
-
-          # Try: cctl rootfs create (triggers EXT4 layer unpack with xattr)
-          echo "=== cctl rootfs create (triggers xattr crash) ===" | tee -a crash-evidence/cctl-poc.txt
-          mkdir -p /tmp/crash-rootfs
-          .build/release/cctl rootfs create --image malicious:latest /tmp/crash-rootfs 2>&1 | tee -a crash-evidence/cctl-poc.txt
-          echo "rootfs-create exit=$?" | tee -a crash-evidence/cctl-poc.txt
-
-          echo "=== cctl run (alternative trigger) ===" | tee -a crash-evidence/cctl-poc.txt
-          .build/release/cctl run --image malicious:latest echo hello 2>&1 | tee -a crash-evidence/cctl-poc.txt || true
-          echo "run exit=$?" | tee -a crash-evidence/cctl-poc.txt
-        continue-on-error: true
-
-      - name: Collect crash reports (cctl)
-        if: always()
-        run: |
-          sleep 5
-          echo "=== cctl DiagnosticReports ===" | tee -a crash-evidence/crash-reports.txt
-          ls -lt ~/Library/Logs/DiagnosticReports/ 2>/dev/null | head -20 | tee -a crash-evidence/crash-reports.txt
+          echo "=== cctl crash reports ===" | tee -a crash-evidence/crash-reports.txt
           for f in $(ls -t ~/Library/Logs/DiagnosticReports/cctl*.ips ~/Library/Logs/DiagnosticReports/cctl*.crash 2>/dev/null | head -3); do
-            echo "=== CCTL CRASH REPORT: $f ===" | tee -a crash-evidence/crash-reports.txt
+            echo "--- $f ---" | tee -a crash-evidence/crash-reports.txt
             cat "$f" | tee -a crash-evidence/crash-reports.txt
-            cp "$f" crash-evidence/ 2>/dev/null || true
+            cp "$f" crash-evidence/
           done
 
       - name: Commit crash evidence to branch
@@ -104,5 +74,5 @@ jobs:
           git pull --rebase origin poc-crash-test 2>/dev/null || true
           git add crash-evidence/
           git diff --cached --stat
-          git commit -m "ci: crash evidence $(date -u +%Y%m%dT%H%M%SZ) [skip ci]" || echo "Nothing to commit"
+          git commit -m "ci: gate-a crash evidence $(date -u +%Y%m%dT%H%M%SZ) [skip ci]" || echo "Nothing to commit"
           git push origin poc-crash-test || echo "Push failed"
