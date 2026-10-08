@@ -3,12 +3,16 @@ name: PoC – xattr asciiValue! crash
 on:
   push:
     branches: [poc-crash-test]
+    paths-ignore:
+      - 'crash-evidence/**'
   workflow_dispatch:
 
 jobs:
   crash-test:
     runs-on: macos-15
     timeout-minutes: 20
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -16,83 +20,81 @@ jobs:
 
       - name: Swift environment info
         run: |
-          swift --version | tee /tmp/evidence.txt
-          echo "---" >> /tmp/evidence.txt
-          xcode-select --print-path >> /tmp/evidence.txt
+          mkdir -p crash-evidence
+          swift --version 2>&1 | tee crash-evidence/swift-version.txt
+          xcode-select --print-path >> crash-evidence/swift-version.txt
 
-      - name: Run minimal PoC reproducer (no full build needed)
+      - name: Run minimal PoC reproducer
         id: poc_minimal
         run: |
-          echo "=== Compiling minimal PoC ===" | tee -a /tmp/evidence.txt
-          swiftc -O poc/poc_reproduce.swift -o /tmp/poc_reproduce 2>&1 | tee -a /tmp/evidence.txt
-          echo "=== Running — expect Fatal error ===" | tee -a /tmp/evidence.txt
+          echo "=== Compiling minimal PoC ===" | tee crash-evidence/poc-minimal.txt
+          swiftc -O poc/poc_reproduce.swift -o /tmp/poc_reproduce 2>&1 | tee -a crash-evidence/poc-minimal.txt
+          echo "=== Running — expect Fatal error ===" | tee -a crash-evidence/poc-minimal.txt
           set +e
-          /tmp/poc_reproduce 2>&1 | tee -a /tmp/evidence.txt
+          /tmp/poc_reproduce 2>&1 | tee -a crash-evidence/poc-minimal.txt
           EXITCODE=$?
-          echo "EXIT_CODE=$EXITCODE" | tee -a /tmp/evidence.txt
+          echo "EXIT_CODE=$EXITCODE" | tee -a crash-evidence/poc-minimal.txt
         continue-on-error: true
 
-      - name: Collect crash evidence (minimal PoC)
+      - name: Collect crash reports (minimal PoC)
         if: always()
         run: |
-          sleep 4
-          echo "=== DiagnosticReports ===" | tee -a /tmp/evidence.txt
-          ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | tee -a /tmp/evidence.txt
-          for f in $(ls -t ~/Library/Logs/DiagnosticReports/poc_reproduce*.ips ~/Library/Logs/DiagnosticReports/poc_reproduce*.crash 2>/dev/null | head -3); do
-            echo "--- CRASH REPORT: $f ---" | tee -a /tmp/evidence.txt
-            cat "$f" | tee -a /tmp/evidence.txt
+          sleep 5
+          echo "=== DiagnosticReports listing ===" | tee crash-evidence/crash-reports.txt
+          ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | tee -a crash-evidence/crash-reports.txt
+          for f in $(ls -t ~/Library/Logs/DiagnosticReports/poc_reproduce*.ips ~/Library/Logs/DiagnosticReports/poc_reproduce*.crash 2>/dev/null | head -5); do
+            echo "=== CRASH REPORT: $f ===" | tee -a crash-evidence/crash-reports.txt
+            cat "$f" | tee -a crash-evidence/crash-reports.txt
+            cp "$f" crash-evidence/ 2>/dev/null || true
           done
-          mkdir -p /tmp/crash-artifacts
-          cp /tmp/evidence.txt /tmp/crash-artifacts/poc-evidence.txt
-          cp ~/Library/Logs/DiagnosticReports/poc_reproduce*.ips /tmp/crash-artifacts/ 2>/dev/null || true
-          cp ~/Library/Logs/DiagnosticReports/poc_reproduce*.crash /tmp/crash-artifacts/ 2>/dev/null || true
 
-      - name: Try full cctl build (Swift 6.3 required)
+      - name: Try full cctl build
         id: build_cctl
         run: |
-          for xc in /Applications/Xcode_26*.app /Applications/Xcode_16.4*.app /Applications/Xcode_16.3*.app; do
+          for xc in /Applications/Xcode_26*.app /Applications/Xcode_16.4*.app /Applications/Xcode_16.3*.app /Applications/Xcode_16.2*.app; do
             if [ -d "$xc" ]; then
-              sudo xcode-select -s "$xc/Contents/Developer" && break
+              sudo xcode-select -s "$xc/Contents/Developer" 2>/dev/null && break
             fi
           done
-          swift build -c release --product cctl 2>&1 | tee -a /tmp/crash-artifacts/build.txt
+          swift --version 2>&1 | tee crash-evidence/cctl-build.txt
+          swift build -c release --product cctl 2>&1 | tee -a crash-evidence/cctl-build.txt
         continue-on-error: true
 
-      - name: Generate malicious OCI image
+      - name: Generate + load malicious OCI image
         if: steps.build_cctl.outcome == 'success'
-        run: python3 poc/craft_layer.py | tee -a /tmp/crash-artifacts/poc-evidence.txt
-
-      - name: Load image
-        if: steps.build_cctl.outcome == 'success'
-        run: .build/release/cctl images load -i malicious.tar 2>&1 | tee -a /tmp/crash-artifacts/poc-evidence.txt
+        run: |
+          python3 poc/craft_layer.py 2>&1 | tee crash-evidence/cctl-poc.txt
+          .build/release/cctl images load -i malicious.tar 2>&1 | tee -a crash-evidence/cctl-poc.txt
         continue-on-error: true
 
       - name: Unpack image — expect cctl crash
         if: steps.build_cctl.outcome == 'success'
-        id: unpack
         run: |
           mkdir -p /tmp/crash-test
           set +e
-          .build/release/cctl images pull --unpack-path /tmp/crash-test malicious:latest 2>&1 | tee -a /tmp/crash-artifacts/poc-evidence.txt
-          echo "CCTL_EXIT=$?" | tee -a /tmp/crash-artifacts/poc-evidence.txt
+          .build/release/cctl images pull --unpack-path /tmp/crash-test malicious:latest 2>&1 | tee -a crash-evidence/cctl-poc.txt
+          echo "CCTL_EXIT=$?" | tee -a crash-evidence/cctl-poc.txt
         continue-on-error: true
 
-      - name: Collect crash evidence (cctl)
+      - name: Collect crash reports (cctl)
         if: always()
         run: |
-          sleep 4
-          echo "=== cctl DiagnosticReports ===" | tee -a /tmp/crash-artifacts/poc-evidence.txt
-          ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | tee -a /tmp/crash-artifacts/poc-evidence.txt
+          sleep 5
+          echo "=== cctl DiagnosticReports ===" | tee -a crash-evidence/crash-reports.txt
+          ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i cctl | tee -a crash-evidence/crash-reports.txt
           for f in $(ls -t ~/Library/Logs/DiagnosticReports/cctl*.ips ~/Library/Logs/DiagnosticReports/cctl*.crash 2>/dev/null | head -3); do
-            echo "--- CRASH REPORT: $f ---" | tee -a /tmp/crash-artifacts/poc-evidence.txt
-            cat "$f" | tee -a /tmp/crash-artifacts/poc-evidence.txt
-            cp "$f" /tmp/crash-artifacts/ 2>/dev/null || true
+            echo "=== CCTL CRASH REPORT: $f ===" | tee -a crash-evidence/crash-reports.txt
+            cat "$f" | tee -a crash-evidence/crash-reports.txt
+            cp "$f" crash-evidence/ 2>/dev/null || true
           done
 
-      - name: Upload crash evidence
+      - name: Commit crash evidence to branch
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: crash-evidence
-          path: /tmp/crash-artifacts/
-          if-no-files-found: warn
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/YuvalFradkin1/containerization.git
+          git add crash-evidence/
+          git diff --cached --stat
+          git commit -m "ci: add crash evidence [skip ci]" || echo "Nothing to commit"
+          git push origin poc-crash-test || echo "Push failed"
