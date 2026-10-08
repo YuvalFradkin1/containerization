@@ -1,5 +1,13 @@
 [+] malicious.tar written
 [+] xattr: 'user.café', value: 92 bytes
-imported malicious:latest
-Error: no host specified in image reference
-CCTL_EXIT=0
+/Users/runner/work/_temp/dfcb761d-ebc9-4a08-acc6-85b50e9ee344.sh: line 1: .build/release/cctl: No such file or directory
+=== cctl images list ===
+/Users/runner/work/_temp/2e76abd9-a141-4351-b54e-b8ce301c5758.sh: line 2: .build/release/cctl: No such file or directory
+=== cctl help ===
+/Users/runner/work/_temp/2e76abd9-a141-4351-b54e-b8ce301c5758.sh: line 4: .build/release/cctl: No such file or directory
+/Users/runner/work/_temp/2e76abd9-a141-4351-b54e-b8ce301c5758.sh: line 5: .build/release/cctl: No such file or directory
+=== Attempting rootfs unpack ===
+/Users/runner/work/_temp/659cc906-54c6-4076-a545-86fc26555dfe.sh: line 5: .build/release/cctl: No such file or directory
+rootfs-create exit=0
+/Users/runner/work/_temp/659cc906-54c6-4076-a545-86fc26555dfe.sh: line 7: .build/release/cctl: No such file or directory
+images-pull exit=0
