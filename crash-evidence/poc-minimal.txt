@@ -1,4 +1,4 @@
-=== Compiling minimal PoC (debug, no optimization) ===
+=== Compiling minimal PoC ===
 === Running PoC — expect Fatal error on U+00E9 ===
 [+] Testing Character('\u{00E9}').asciiValue = nil
 [+] Expected: nil (é is not ASCII; asciiValue! will crash)

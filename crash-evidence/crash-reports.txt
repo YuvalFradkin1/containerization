@@ -2,3 +2,6 @@
 total 0
 drwxrwx---  2 runner  _analyticsusers  64 Sep  7 03:52 Retired
 === cctl DiagnosticReports ===
+total 16
+-rw-------@ 1 runner  _analyticsusers  7157 Oct  8 14:26 poc_reproduce-2026-10-08-142615.ips
+drwxrwx---  2 runner  _analyticsusers    64 Sep  7 03:52 Retired
