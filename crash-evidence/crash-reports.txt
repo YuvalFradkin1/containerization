@@ -1,0 +1,3 @@
+=== DiagnosticReports listing ===
+Retired
+=== cctl DiagnosticReports ===

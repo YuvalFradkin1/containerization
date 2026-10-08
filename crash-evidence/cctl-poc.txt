@@ -1,0 +1,5 @@
+[+] malicious.tar written
+[+] xattr: 'user.café', value: 92 bytes
+imported malicious:latest
+Error: no host specified in image reference
+CCTL_EXIT=0

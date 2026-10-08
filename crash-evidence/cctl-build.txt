@@ -1,0 +1,1155 @@
+swift-driver version: 1.127.14.1 Apple Swift version 6.2 (swiftlang-6.2.0.19.9 clang-1700.3.19.1)
+Target: arm64-apple-macosx15.0
+Fetching https://github.com/apple/swift-nio-extras.git
+Fetching https://github.com/apple/swift-system.git
+[1/7241] Fetching swift-system
+[74/13943] Fetching swift-system, swift-nio-extras
+Fetched https://github.com/apple/swift-nio-extras.git from cache (1.35s)
+Fetched https://github.com/apple/swift-system.git from cache (1.36s)
+Fetching https://github.com/apple/swift-log.git
+Fetching https://github.com/apple/swift-nio-ssl.git
+[1/8257] Fetching swift-log
+[8258/25112] Fetching swift-log, swift-nio-ssl
+Fetched https://github.com/apple/swift-log.git from cache (1.99s)
+Fetched https://github.com/apple/swift-nio-ssl.git from cache (2.00s)
+Fetching https://github.com/grpc/grpc-swift-nio-transport.git
+Fetching https://github.com/apple/swift-numerics.git
+[1/6405] Fetching grpc-swift-nio-transport
+Fetched https://github.com/grpc/grpc-swift-nio-transport.git from cache (1.36s)
+Fetching https://github.com/apple/swift-nio.git
+[1/6665] Fetching swift-numerics
+Fetched https://github.com/apple/swift-numerics.git from cache (1.81s)
+Fetching https://github.com/apple/swift-collections.git
+[1/28545] Fetching swift-collections
+[2000/114905] Fetching swift-collections, swift-nio
+Fetched https://github.com/apple/swift-collections.git from cache (3.22s)
+Fetching https://github.com/apple/swift-service-context.git
+[1/1499] Fetching swift-service-context
+Fetched https://github.com/apple/swift-service-context.git from cache (0.83s)
+Fetching https://github.com/swift-server/swift-service-lifecycle.git
+Fetched https://github.com/apple/swift-nio.git from cache (4.74s)
+Fetching https://github.com/swiftlang/swift-docc-plugin
+[1/2345] Fetching swift-docc-plugin
+Fetched https://github.com/swiftlang/swift-docc-plugin from cache (0.99s)
+Fetching https://github.com/swift-server/async-http-client.git
+[1/2867] Fetching swift-service-lifecycle
+Fetched https://github.com/swift-server/swift-service-lifecycle.git from cache (1.53s)
+Fetching https://github.com/apple/swift-http-structured-headers.git
+[1/1253] Fetching swift-http-structured-headers
+[39/17716] Fetching swift-http-structured-headers, async-http-client
+Fetched https://github.com/apple/swift-http-structured-headers.git from cache (0.95s)
+Fetching https://github.com/apple/swift-crypto.git
+[824/16463] Fetching async-http-client
+Fetched https://github.com/swift-server/async-http-client.git from cache (1.72s)
+Fetching https://github.com/apple/swift-http-types.git
+[1/18603] Fetching swift-crypto
+[6140/20542] Fetching swift-crypto, swift-http-types
+Fetched https://github.com/apple/swift-http-types.git from cache (1.14s)
+Fetching https://github.com/grpc/grpc-swift-protobuf.git
+Fetched https://github.com/apple/swift-crypto.git from cache (1.77s)
+Fetching https://github.com/apple/swift-atomics.git
+[1/1885] Fetching swift-atomics
+[699/4524] Fetching swift-atomics, grpc-swift-protobuf
+Fetched https://github.com/apple/swift-atomics.git from cache (1.06s)
+Fetching https://github.com/facebook/zstd.git
+[1109/2639] Fetching grpc-swift-protobuf
+Fetched https://github.com/grpc/grpc-swift-protobuf.git from cache (1.34s)
+Fetching https://github.com/apple/swift-configuration.git
+[1/3896] Fetching swift-configuration
+Fetched https://github.com/apple/swift-configuration.git from cache (1.11s)
+Fetching https://github.com/apple/swift-certificates.git
+[1/7609] Fetching swift-certificates
+Fetched https://github.com/apple/swift-certificates.git from cache (1.09s)
+Fetching https://github.com/grpc/grpc-swift-2.git
+[1/85949] Fetching zstd
+[15472/117193] Fetching zstd, grpc-swift-2
+Fetched https://github.com/grpc/grpc-swift-2.git from cache (1.61s)
+[72198/85949] Fetching zstd
+Fetching https://github.com/apple/swift-nio-http2.git
+[85950/98237] Fetching zstd, swift-nio-http2
+Fetched https://github.com/apple/swift-nio-http2.git from cache (1.39s)
+Fetching https://github.com/apple/swift-algorithms.git
+[1/6164] Fetching swift-algorithms
+Fetched https://github.com/apple/swift-algorithms.git from cache (2.32s)
+Fetching https://github.com/apple/swift-nio-transport-services.git
+Fetched https://github.com/facebook/zstd.git from cache (7.67s)
+Fetching https://github.com/swiftlang/swift-docc-symbolkit
+[1/2867] Fetching swift-nio-transport-services
+Fetched https://github.com/apple/swift-nio-transport-services.git from cache (0.56s)
+Fetching https://github.com/apple/swift-async-algorithms.git
+[1/3834] Fetching swift-docc-symbolkit
+Fetched https://github.com/swiftlang/swift-docc-symbolkit from cache (0.73s)
+Fetching https://github.com/apple/swift-asn1.git
+[1/6806] Fetching swift-async-algorithms
+Fetched https://github.com/apple/swift-async-algorithms.git from cache (0.66s)
+Fetching https://github.com/apple/swift-argument-parser.git
+[1/1995] Fetching swift-asn1
+Fetched https://github.com/apple/swift-asn1.git from cache (0.79s)
+Fetching https://github.com/apple/swift-protobuf.git
+[1/19096] Fetching swift-argument-parser
+Fetched https://github.com/apple/swift-argument-parser.git from cache (1.03s)
+Fetching https://github.com/apple/swift-distributed-tracing.git
+[1/54810] Fetching swift-protobuf
+[1646/61352] Fetching swift-protobuf, swift-distributed-tracing
+Fetched https://github.com/apple/swift-distributed-tracing.git from cache (0.94s)
+[10414/54810] Fetching swift-protobuf
+Fetched https://github.com/apple/swift-protobuf.git from cache (5.62s)
+Computing version for https://github.com/facebook/zstd.git
+Computed https://github.com/facebook/zstd.git at 1.5.7 (34.76s)
+Computing version for https://github.com/swiftlang/swift-docc-plugin
+Computed https://github.com/swiftlang/swift-docc-plugin at 1.5.0 (0.82s)
+Computing version for https://github.com/apple/swift-system.git
+Computed https://github.com/apple/swift-system.git at 1.7.5 (0.59s)
+Computing version for https://github.com/swift-server/async-http-client.git
+Computed https://github.com/swift-server/async-http-client.git at 1.35.0 (0.69s)
+Computing version for https://github.com/apple/swift-nio-ssl.git
+Computed https://github.com/apple/swift-nio-ssl.git at 2.37.2 (0.64s)
+Computing version for https://github.com/apple/swift-nio.git
+Computed https://github.com/apple/swift-nio.git at 2.101.3 (0.99s)
+Computing version for https://github.com/apple/swift-protobuf.git
+Computed https://github.com/apple/swift-protobuf.git at 1.38.1 (0.68s)
+Computing version for https://github.com/grpc/grpc-swift-protobuf.git
+Computed https://github.com/grpc/grpc-swift-protobuf.git at 2.4.1 (0.63s)
+Computing version for https://github.com/grpc/grpc-swift-nio-transport.git
+Computed https://github.com/grpc/grpc-swift-nio-transport.git at 2.9.0 (0.55s)
+Computing version for https://github.com/grpc/grpc-swift-2.git
+Computed https://github.com/grpc/grpc-swift-2.git at 2.4.2 (0.59s)
+Computing version for https://github.com/apple/swift-crypto.git
+Computed https://github.com/apple/swift-crypto.git at 3.15.1 (1.34s)
+Computing version for https://github.com/apple/swift-collections.git
+Computed https://github.com/apple/swift-collections.git at 1.5.1 (0.78s)
+Computing version for https://github.com/apple/swift-argument-parser.git
+Computed https://github.com/apple/swift-argument-parser.git at 1.8.2 (0.72s)
+Computing version for https://github.com/apple/swift-log.git
+Computed https://github.com/apple/swift-log.git at 1.14.0 (0.59s)
+Computed https://github.com/facebook/zstd.git at 1.5.7 (0.00s)
+Computed https://github.com/swiftlang/swift-docc-plugin at 1.5.0 (0.00s)
+Computed https://github.com/apple/swift-system.git at 1.7.5 (0.00s)
+Computed https://github.com/swift-server/async-http-client.git at 1.35.0 (0.00s)
+Computed https://github.com/apple/swift-nio-ssl.git at 2.37.2 (0.00s)
+Computed https://github.com/apple/swift-nio.git at 2.101.3 (0.00s)
+Computed https://github.com/apple/swift-protobuf.git at 1.38.1 (0.00s)
+Computed https://github.com/grpc/grpc-swift-protobuf.git at 2.4.1 (0.00s)
+Computed https://github.com/grpc/grpc-swift-nio-transport.git at 2.9.0 (0.00s)
+Computed https://github.com/grpc/grpc-swift-2.git at 2.4.2 (0.00s)
+Computed https://github.com/apple/swift-crypto.git at 3.15.1 (0.00s)
+Computed https://github.com/apple/swift-collections.git at 1.5.1 (0.00s)
+Computed https://github.com/apple/swift-argument-parser.git at 1.8.2 (0.00s)
+Computed https://github.com/apple/swift-log.git at 1.14.0 (0.00s)
+Computing version for https://github.com/swiftlang/swift-docc-symbolkit
+Computed https://github.com/swiftlang/swift-docc-symbolkit at 1.0.0 (1.04s)
+Computing version for https://github.com/apple/swift-service-context.git
+Computed https://github.com/apple/swift-service-context.git at 1.3.0 (0.46s)
+Computing version for https://github.com/apple/swift-configuration.git
+Computed https://github.com/apple/swift-configuration.git at 1.2.0 (1.51s)
+Computing version for https://github.com/apple/swift-distributed-tracing.git
+Computed https://github.com/apple/swift-distributed-tracing.git at 1.4.1 (0.81s)
+Computing version for https://github.com/apple/swift-algorithms.git
+Computed https://github.com/apple/swift-algorithms.git at 1.2.1 (0.99s)
+Computing version for https://github.com/apple/swift-atomics.git
+Computed https://github.com/apple/swift-atomics.git at 1.3.1 (0.57s)
+Computing version for https://github.com/apple/swift-nio-transport-services.git
+Computed https://github.com/apple/swift-nio-transport-services.git at 1.28.0 (1.02s)
+Computing version for https://github.com/apple/swift-nio-extras.git
+Computed https://github.com/apple/swift-nio-extras.git at 1.34.3 (1.04s)
+Computing version for https://github.com/apple/swift-nio-http2.git
+Computed https://github.com/apple/swift-nio-http2.git at 1.44.0 (0.61s)
+Computing version for https://github.com/apple/swift-asn1.git
+Computed https://github.com/apple/swift-asn1.git at 1.7.1 (0.72s)
+Computing version for https://github.com/apple/swift-certificates.git
+Computed https://github.com/apple/swift-certificates.git at 1.19.3 (0.83s)
+Computing version for https://github.com/swift-server/swift-service-lifecycle
+Computed https://github.com/swift-server/swift-service-lifecycle at 2.11.0 (0.47s)
+Computing version for https://github.com/apple/swift-numerics.git
+Computed https://github.com/apple/swift-numerics.git at 1.1.1 (0.36s)
+Computing version for https://github.com/apple/swift-async-algorithms.git
+Computed https://github.com/apple/swift-async-algorithms.git at 1.1.5 (0.52s)
+Computing version for https://github.com/apple/swift-http-structured-headers.git
+Computed https://github.com/apple/swift-http-structured-headers.git at 1.7.0 (0.65s)
+Computing version for https://github.com/apple/swift-http-types.git
+Computed https://github.com/apple/swift-http-types.git at 1.6.0 (0.34s)
+Creating working copy for https://github.com/apple/swift-nio-http2.git
+Working copy of https://github.com/apple/swift-nio-http2.git resolved at 1.44.0
+Creating working copy for https://github.com/apple/swift-async-algorithms.git
+Working copy of https://github.com/apple/swift-async-algorithms.git resolved at 1.1.5
+Creating working copy for https://github.com/facebook/zstd.git
+Working copy of https://github.com/facebook/zstd.git resolved at 1.5.7
+Creating working copy for https://github.com/apple/swift-nio-ssl.git
+Working copy of https://github.com/apple/swift-nio-ssl.git resolved at 2.37.2
+Creating working copy for https://github.com/apple/swift-numerics.git
+Working copy of https://github.com/apple/swift-numerics.git resolved at 1.1.1
+Creating working copy for https://github.com/apple/swift-configuration.git
+Working copy of https://github.com/apple/swift-configuration.git resolved at 1.2.0
+Creating working copy for https://github.com/grpc/grpc-swift-2.git
+Working copy of https://github.com/grpc/grpc-swift-2.git resolved at 2.4.2
+Creating working copy for https://github.com/apple/swift-service-context.git
+Working copy of https://github.com/apple/swift-service-context.git resolved at 1.3.0
+Creating working copy for https://github.com/swiftlang/swift-docc-symbolkit
+Working copy of https://github.com/swiftlang/swift-docc-symbolkit resolved at 1.0.0
+Creating working copy for https://github.com/apple/swift-system.git
+Working copy of https://github.com/apple/swift-system.git resolved at 1.7.5
+Creating working copy for https://github.com/apple/swift-certificates.git
+Working copy of https://github.com/apple/swift-certificates.git resolved at 1.19.3
+Creating working copy for https://github.com/apple/swift-protobuf.git
+Working copy of https://github.com/apple/swift-protobuf.git resolved at 1.38.1
+Creating working copy for https://github.com/apple/swift-crypto.git
+Working copy of https://github.com/apple/swift-crypto.git resolved at 3.15.1
+Creating working copy for https://github.com/apple/swift-algorithms.git
+Working copy of https://github.com/apple/swift-algorithms.git resolved at 1.2.1
+Creating working copy for https://github.com/swift-server/async-http-client.git
+Working copy of https://github.com/swift-server/async-http-client.git resolved at 1.35.0
+Creating working copy for https://github.com/apple/swift-log.git
+Working copy of https://github.com/apple/swift-log.git resolved at 1.14.0
+Creating working copy for https://github.com/apple/swift-nio-transport-services.git
+Working copy of https://github.com/apple/swift-nio-transport-services.git resolved at 1.28.0
+Creating working copy for https://github.com/apple/swift-http-structured-headers.git
+Working copy of https://github.com/apple/swift-http-structured-headers.git resolved at 1.7.0
+Creating working copy for https://github.com/apple/swift-argument-parser.git
+Working copy of https://github.com/apple/swift-argument-parser.git resolved at 1.8.2
+Creating working copy for https://github.com/grpc/grpc-swift-nio-transport.git
+Working copy of https://github.com/grpc/grpc-swift-nio-transport.git resolved at 2.9.0
+Creating working copy for https://github.com/apple/swift-distributed-tracing.git
+Working copy of https://github.com/apple/swift-distributed-tracing.git resolved at 1.4.1
+Creating working copy for https://github.com/apple/swift-nio.git
+Working copy of https://github.com/apple/swift-nio.git resolved at 2.101.3
+Creating working copy for https://github.com/apple/swift-asn1.git
+Working copy of https://github.com/apple/swift-asn1.git resolved at 1.7.1
+Creating working copy for https://github.com/apple/swift-http-types.git
+Working copy of https://github.com/apple/swift-http-types.git resolved at 1.6.0
+Creating working copy for https://github.com/apple/swift-atomics.git
+Working copy of https://github.com/apple/swift-atomics.git resolved at 1.3.1
+Creating working copy for https://github.com/grpc/grpc-swift-protobuf.git
+Working copy of https://github.com/grpc/grpc-swift-protobuf.git resolved at 2.4.1
+Creating working copy for https://github.com/apple/swift-nio-extras.git
+Working copy of https://github.com/apple/swift-nio-extras.git resolved at 1.34.3
+Creating working copy for https://github.com/swift-server/swift-service-lifecycle.git
+Working copy of https://github.com/swift-server/swift-service-lifecycle.git resolved at 2.11.0
+Creating working copy for https://github.com/swiftlang/swift-docc-plugin
+Working copy of https://github.com/swiftlang/swift-docc-plugin resolved at 1.5.0
+Creating working copy for https://github.com/apple/swift-collections.git
+Working copy of https://github.com/apple/swift-collections.git resolved at 1.5.1
+Building for production...
+[0/915] Compiling pem_pkey.cc
+[1/915] Compiling pem_pk8.cc
+[1/915] Copying PrivacyInfo.xcprivacy
+[10/915] Write swift-version--DC8059B11DF2811.txt
+[11/915] Compiling ssl_session.cc
+[12/915] Compiling fastcover.c
+[13/915] Compiling zdict.c
+[14/915] Compiling cover.c
+[15/915] Compiling zstd_decompress.c
+[16/915] Compiling zstd_ddict.c
+[17/915] Compiling divsufsort.c
+[18/915] Compiling huf_decompress_amd64.S
+[19/915] Compiling zstd_decompress_block.c
+[20/915] Compiling zstdmt_compress.c
+[21/915] Compiling zstd_preSplit.c
+[22/915] Compiling zstd_ldm.c
+[23/915] Compiling huf_decompress.c
+[24/915] Compiling zstd_opt.c
+[25/915] Compiling zstd_fast.c
+[26/915] Compiling zstd_compress_superblock.c
+[27/915] Compiling zstd_compress_sequences.c
+[28/915] Compiling zstd_compress_literals.c
+[29/915] Compiling zstd_double_fast.c
+[30/915] Compiling huf_compress.c
+[31/915] Compiling hist.c
+[32/915] Compiling fse_compress.c
+[33/915] Compiling zstd_common.c
+[34/915] Compiling xxhash.c
+[35/915] Compiling threading.c
+[36/915] Compiling pool.c
+[37/915] Compiling fse_decompress.c
+[38/915] Compiling error_private.c
+[39/915] Compiling entropy_common.c
+[40/915] Compiling debug.c
+[41/915] Write sources
+[43/915] Compiling _NumericsShims _NumericsShims.c
+[44/915] Write sources
+[47/916] Compiling zstd_compress.c
+[49/917] Compiling _NIOBase64 Base64.swift
+[49/917] Write sources
+[51/917] Compiling _AtomicsShims.c
+[52/917] Compiling zstd_lazy.c
+[52/917] Write sources
+[57/917] Copying PrivacyInfo.xcprivacy
+[58/917] Write sources
+[61/919] Compiling _CertificateInternals _TinyArray.swift
+[62/920] Compiling _NIODataStructures Heap.swift
+[62/920] Write sources
+[71/921] Compiling ServiceContextModule ServiceContext.swift
+[72/922] Compiling RealModule AlgebraicField.swift
+[72/922] Write sources
+[89/923] Compiling Logging MultiplexLogHandler.swift
+[90/924] Compiling InternalCollectionsUtilities Debugging.swift
+[90/924] Write sources
+[92/925] Compiling SwiftASN1 ASN1.swift
+[93/926] Compiling OrderedCollections _HashTable+Bucket.swift
+[94/927] Compiling Instrumentation Instrument.swift
+[94/927] Write sources
+[99/928] Compiling Tracing InstrumentationSystem+Tracing.swift
+[100/929] Compiling HeapModule Heap+Descriptions.swift
+[101/930] Compiling _RopeModule BigString+Builder.swift
+[101/930] Write sources
+[110/931] Compiling Crypto AES-GCM.swift
+[111/931] Compiling HashTreeCollections _AncestorHashSlots.swift
+[111/931] Write sources
+[119/933] Compiling ContainersPreview OutputSpan+Extras.swift
+[119/933] Write sources
+[124/934] Compiling ContainerizationError ContainerizationError.swift
+[125/935] Compiling ConcurrencyHelpers Lock.swift
+[125/935] Write sources
+[127/936] Compiling DequeModule Deque+Codable.swift
+[127/936] Write sources
+[128/936] Compiling CSystem shims.c
+[130/937] Compiling UnixSignals UnixSignal.swift
+[131/938] Compiling SystemPackage Errno.swift
+[131/938] Compiling CShim vsock.c
+[133/939] Compiling SwiftProtobuf AnyMessageStorage.swift
+[133/939] Compiling CShim socket_helpers.c
+[134/939] Compiling CShim prctl.c
+[135/939] Compiling CShim openat2.c
+[136/939] Compiling CShim exec_command.c
+[137/939] Compiling CShim cz_tap.c
+[138/939] Compiling CShim capability.c
+[139/939] Compiling CNIOWindows shim.c
+[141/940] Compiling GRPCCore CallOptions.swift
+[141/940] Compiling CNIOWindows WSAStartup.c
+[143/941] Compiling GRPCProtobuf Coding.swift
+[143/941] Compiling CNIOWASI CNIOWASI.c
+[144/941] Compiling CNIOPosix event_loop_id.c
+[145/941] Compiling CNIOOpenBSD shim.c
+[146/941] Compiling CNIOLinux shim.c
+[147/941] Compiling CNIOLinux liburing_shims.c
+[148/941] Compiling CNIOLLHTTP c_nio_llhttp.c
+[149/941] Compiling CNIOLLHTTP c_nio_http.c
+[150/941] Compiling CNIOLLHTTP c_nio_api.c
+[151/941] Compiling CNIOFreeBSD shim.c
+[152/941] Compiling CNIOExtrasZlib zutil.c
+[153/941] Compiling CNIOExtrasZlib trees.c
+[154/941] Compiling CNIOExtrasZlib inftrees.c
+[155/941] Compiling CNIOExtrasZlib inflate.c
+[156/941] Compiling CNIOExtrasZlib inffast.c
+[157/941] Compiling CNIOExtrasZlib deflate.c
+[158/941] Compiling CNIOExtrasZlib crc32.c
+[160/941] Compiling Configuration AccessReporter.swift
+[160/941] Compiling CNIOExtrasZlib adler32.c
+[161/941] Compiling CNIODarwin shim.c
+[162/941] Compiling fiat_p256_adx_sqr.S
+[163/941] Compiling fiat_p256_adx_mul.S
+[164/941] Compiling fiat_curve25519_adx_square.S
+[165/941] Compiling CNIOBoringSSLShims shims.c
+[166/941] Compiling fiat_curve25519_adx_mul.S
+[167/941] Compiling tls_method.cc
+[168/941] Compiling tls_record.cc
+[169/941] Compiling tls13_enc.cc
+[170/941] Compiling tls13_server.cc
+[172/941] Compiling ContainerizationOS AsyncSignalHandler.swift
+[172/941] Compiling tls13_both.cc
+[173/941] Compiling tls13_client.cc
+[174/941] Compiling t1_enc.cc
+[175/941] Compiling ssl_versions.cc
+[176/941] Compiling ssl_x509.cc
+[177/941] Compiling ssl_transcript.cc
+[178/941] Compiling ssl_stat.cc
+[179/941] Compiling ssl_privkey.cc
+[180/941] Compiling ssl_key_share.cc
+[181/941] Compiling ssl_lib.cc
+[182/941] Compiling ssl_file.cc
+[183/941] Compiling ssl_credential.cc
+[184/941] Compiling ssl_cipher.cc
+[185/941] Compiling ssl_cert.cc
+[186/941] Compiling ssl_buffer.cc
+[187/941] Compiling ssl_asn1.cc
+[188/941] Compiling ssl_aead_ctx.cc
+[189/941] Compiling s3_pkt.cc
+[190/941] Compiling s3_lib.cc
+[191/941] Compiling s3_both.cc
+[192/941] Compiling handshake_server.cc
+[193/941] Compiling handshake.cc
+[194/941] Compiling handshake_client.cc
+[195/941] Compiling handoff.cc
+[196/941] Compiling encrypted_client_hello.cc
+[197/941] Compiling extensions.cc
+[198/941] Compiling dtls_method.cc
+[199/941] Compiling dtls_record.cc
+[200/941] Compiling d1_srtp.cc
+[201/941] Compiling d1_pkt.cc
+[202/941] Compiling d1_lib.cc
+[203/941] Compiling md5-x86_64-linux.S
+[204/941] Compiling md5-x86_64-apple.S
+[205/941] Compiling md5-586-linux.S
+[206/941] Compiling md5-586-apple.S
+[207/941] Compiling bio_ssl.cc
+[208/941] Compiling err_data.cc
+[209/941] Compiling chacha20_poly1305_x86_64-apple.S
+[210/941] Compiling chacha20_poly1305_x86_64-linux.S
+[211/941] Compiling chacha20_poly1305_armv8-win.S
+[212/941] Compiling chacha20_poly1305_armv8-linux.S
+[213/941] Compiling chacha-x86_64-linux.S
+[214/941] Compiling chacha-x86_64-apple.S
+[215/941] Compiling chacha20_poly1305_armv8-apple.S
+[216/941] Compiling chacha-x86-linux.S
+[217/941] Compiling chacha-x86-apple.S
+[218/941] Compiling d1_both.cc
+[219/941] Compiling chacha-armv8-win.S
+[220/941] Compiling chacha-armv8-linux.S
+[221/941] Compiling chacha-armv4-linux.S
+[222/941] Compiling aes128gcmsiv-x86_64-linux.S
+[223/941] Compiling chacha-armv8-apple.S
+[224/941] Compiling aes128gcmsiv-x86_64-apple.S
+[225/941] Compiling x86_64-mont5-linux.S
+[226/941] Compiling x86_64-mont5-apple.S
+[227/941] Compiling x86_64-mont-linux.S
+[228/941] Compiling x86_64-mont-apple.S
+[229/941] Compiling x86-mont-linux.S
+[230/941] Compiling x86-mont-apple.S
+[231/941] Compiling vpaes-x86_64-linux.S
+[232/941] Compiling vpaes-x86_64-apple.S
+[233/941] Compiling vpaes-armv8-win.S
+[233/941] Compiling vpaes-x86-apple.S
+[235/941] Compiling vpaes-x86-linux.S
+[236/941] Compiling vpaes-armv7-linux.S
+[236/941] Compiling vpaes-armv8-linux.S
+[238/941] Compiling vpaes-armv8-apple.S
+[239/941] Compiling sha512-x86_64-linux.S
+[240/941] Compiling sha512-x86_64-apple.S
+[241/941] Compiling sha512-armv8-win.S
+[242/941] Compiling sha512-armv8-linux.S
+[243/941] Compiling sha512-armv4-linux.S
+[244/941] Compiling sha512-armv8-apple.S
+[245/941] Compiling sha512-586-linux.S
+[246/941] Compiling sha512-586-apple.S
+[247/941] Compiling sha256-x86_64-apple.S
+[247/941] Compiling sha256-x86_64-linux.S
+[249/941] Compiling sha256-armv8-win.S
+[250/941] Compiling sha256-armv8-linux.S
+[251/941] Compiling sha256-armv8-apple.S
+[252/941] Compiling sha256-armv4-linux.S
+[253/941] Compiling sha256-586-linux.S
+[254/941] Compiling sha1-x86_64-linux.S
+[254/941] Compiling sha256-586-apple.S
+[256/941] Compiling sha1-x86_64-apple.S
+[257/941] Compiling sha1-armv8-win.S
+[258/941] Compiling sha1-armv8-linux.S
+[259/941] Compiling sha1-armv8-apple.S
+[260/941] Compiling sha1-armv4-large-linux.S
+[261/941] Compiling sha1-586-linux.S
+[262/941] Compiling sha1-586-apple.S
+[263/941] Compiling rsaz-avx2-apple.S
+[264/941] Compiling rsaz-avx2-linux.S
+[265/941] Compiling p256_beeu-x86_64-asm-linux.S
+[266/941] Compiling rdrand-x86_64-apple.S
+[267/941] Compiling rdrand-x86_64-linux.S
+[268/941] Compiling p256_beeu-x86_64-asm-apple.S
+[269/941] Compiling p256_beeu-armv8-asm-win.S
+[270/941] Compiling p256_beeu-armv8-asm-linux.S
+[271/941] Compiling p256-x86_64-asm-linux.S
+[272/941] Compiling p256_beeu-armv8-asm-apple.S
+[273/941] Compiling p256-x86_64-asm-apple.S
+[274/941] Compiling p256-armv8-asm-win.S
+[275/941] Compiling p256-armv8-asm-linux.S
+[276/941] Compiling p256-armv8-asm-apple.S
+[277/941] Compiling ghashv8-armv8-win.S
+[278/941] Compiling ghashv8-armv8-linux.S
+[279/941] Compiling ghashv8-armv8-apple.S
+[280/941] Compiling ghashv8-armv7-linux.S
+[281/941] Compiling ghash-x86_64-linux.S
+[282/941] Compiling ghash-x86_64-apple.S
+[283/941] Compiling ghash-x86-linux.S
+[284/941] Compiling ghash-ssse3-x86_64-linux.S
+[285/941] Compiling ghash-x86-apple.S
+[286/941] Compiling ghash-ssse3-x86_64-apple.S
+[287/941] Compiling ghash-ssse3-x86-apple.S
+[288/941] Compiling ghash-ssse3-x86-linux.S
+[289/941] Compiling ghash-neon-armv8-win.S
+[290/941] Compiling ghash-neon-armv8-linux.S
+[291/941] Compiling ghash-neon-armv8-apple.S
+[292/941] Compiling co-586-linux.S
+[293/941] Compiling ghash-armv4-linux.S
+[294/941] Compiling co-586-apple.S
+[295/941] Compiling bsaes-armv7-linux.S
+[296/941] Compiling bn-armv8-win.S
+[297/941] Compiling bn-armv8-linux.S
+[298/941] Compiling bn-armv8-apple.S
+[299/941] Compiling bn-586-linux.S
+[300/941] Compiling bn-586-apple.S
+[301/941] Compiling armv8-mont-win.S
+[302/941] Compiling armv8-mont-linux.S
+[303/941] Compiling armv8-mont-apple.S
+[304/941] Compiling armv4-mont-linux.S
+[305/941] Compiling aesv8-gcm-armv8-win.S
+[306/941] Compiling aesv8-gcm-armv8-linux.S
+[307/941] Compiling aesv8-armv8-win.S
+[308/941] Compiling aesv8-gcm-armv8-apple.S
+[309/941] Compiling aesv8-armv8-linux.S
+[310/941] Compiling aesv8-armv8-apple.S
+[311/941] Compiling aesv8-armv7-linux.S
+[312/941] Compiling aesni-x86_64-linux.S
+[313/941] Compiling aesni-x86_64-apple.S
+[314/941] Compiling aesni-x86-linux.S
+[315/941] Compiling aesni-x86-apple.S
+[316/941] Compiling aesni-gcm-x86_64-linux.S
+[317/941] Compiling aesni-gcm-x86_64-apple.S
+[318/941] Compiling aes-gcm-avx2-x86_64-linux.S
+[319/941] Compiling aes-gcm-avx2-x86_64-apple.S
+[320/941] Compiling aes-gcm-avx10-x86_64-linux.S
+[321/941] Compiling aes-gcm-avx10-x86_64-apple.S
+[322/941] Compiling x_val.cc
+[323/941] Compiling x_x509a.cc
+[324/941] Compiling x_x509.cc
+[325/941] Compiling x_sig.cc
+[326/941] Compiling x_spki.cc
+[327/941] Compiling x_req.cc
+[328/941] Compiling x_pubkey.cc
+[329/941] Compiling x_name.cc
+[330/941] Compiling x_exten.cc
+[331/941] Compiling x_crl.cc
+[332/941] Compiling x_attrib.cc
+[333/941] Compiling x_all.cc
+[334/941] Compiling x_algor.cc
+[335/941] Compiling x509spki.cc
+[336/941] Compiling x509rset.cc
+[337/941] Compiling x509name.cc
+[338/941] Compiling x509cset.cc
+[339/941] Compiling x509_vpm.cc
+[340/941] Compiling x509_txt.cc
+[341/941] Compiling x509_v3.cc
+[342/941] Compiling x509_vfy.cc
+[343/941] Compiling x509_trs.cc
+[344/941] Compiling x509_set.cc
+[345/941] Compiling x509_req.cc
+[346/941] Compiling x509_obj.cc
+[347/941] Compiling x509_ext.cc
+[348/941] Compiling x509_lu.cc
+[349/941] Compiling x509_def.cc
+[350/941] Compiling x509_d2.cc
+[351/941] Compiling x509_cmp.cc
+[352/941] Compiling x509_att.cc
+[353/941] Compiling x509.cc
+[354/941] Compiling v3_utl.cc
+[355/941] Compiling v3_skey.cc
+[356/941] Compiling v3_purp.cc
+[357/941] Compiling v3_prn.cc
+[358/941] Compiling v3_pmaps.cc
+[359/941] Compiling v3_pcons.cc
+[360/941] Compiling v3_ocsp.cc
+[361/941] Compiling v3_ncons.cc
+[362/941] Compiling v3_lib.cc
+[363/941] Compiling v3_int.cc
+[364/941] Compiling v3_ia5.cc
+[365/941] Compiling v3_info.cc
+[366/941] Compiling v3_genn.cc
+[367/941] Compiling v3_enum.cc
+[368/941] Compiling v3_extku.cc
+[369/941] Compiling v3_crld.cc
+[370/941] Compiling v3_conf.cc
+[371/941] Compiling v3_cpols.cc
+[372/941] Compiling v3_bitst.cc
+[373/941] Compiling v3_bcons.cc
+[374/941] Compiling v3_alt.cc
+[375/941] Compiling v3_akeya.cc
+[376/941] Compiling v3_akey.cc
+[377/941] Compiling t_x509a.cc
+[378/941] Compiling t_x509.cc
+[379/941] Compiling t_req.cc
+[380/941] Compiling t_crl.cc
+[381/941] Compiling rsa_pss.cc
+[382/941] Compiling policy.cc
+[383/941] Compiling i2d_pr.cc
+[384/941] Compiling name_print.cc
+[385/941] Compiling by_file.cc
+[386/941] Compiling by_dir.cc
+[387/941] Compiling asn1_gen.cc
+[388/941] Compiling algorithm.cc
+[389/941] Compiling a_verify.cc
+[390/941] Compiling a_sign.cc
+[391/941] Compiling a_digest.cc
+[392/941] Compiling voprf.cc
+[393/941] Compiling trust_token.cc
+[394/941] Compiling thread_win.cc
+[395/941] Compiling thread_pthread.cc
+[396/941] Compiling pmbtoken.cc
+[397/941] Compiling thread.cc
+[398/941] Compiling thread_none.cc
+[399/941] Compiling stack.cc
+[400/941] Compiling slhdsa.cc
+[401/941] Compiling spake2plus.cc
+[402/941] Compiling siphash.cc
+[403/941] Compiling sha512.cc
+[404/941] Compiling sha256.cc
+[405/941] Compiling sha1.cc
+[406/941] Compiling rsa_print.cc
+[407/941] Compiling rsa_extra.cc
+[408/941] Compiling rsa_crypt.cc
+[409/941] Compiling refcount.cc
+[410/941] Compiling rsa_asn1.cc
+[411/941] Compiling rc4.cc
+[412/941] Compiling windows.cc
+[413/941] Compiling urandom.cc
+[414/941] Compiling trusty.cc
+[415/941] Compiling rand.cc
+[416/941] Compiling passive.cc
+[417/941] Compiling ios.cc
+[418/941] Compiling getentropy.cc
+[419/941] Compiling forkunsafe.cc
+[420/941] Compiling fork_detect.cc
+[421/941] Compiling deterministic.cc
+[422/941] Compiling poly1305_arm_asm.S
+[423/941] Compiling pool.cc
+[424/941] Compiling poly1305_vec.cc
+[425/941] Compiling poly1305_arm.cc
+[426/941] Compiling poly1305.cc
+[427/941] Compiling pkcs8_x509.cc
+[428/941] Compiling pkcs8.cc
+[429/941] Compiling p5_pbev2.cc
+[430/941] Compiling pkcs7.cc
+[431/941] Compiling pkcs7_x509.cc
+[432/941] Compiling pem_xaux.cc
+[433/941] Compiling pem_x509.cc
+[434/941] Compiling pem_oth.cc
+[435/941] Compiling pem_lib.cc
+[436/941] Compiling pem_info.cc
+[437/941] Compiling pem_all.cc
+[438/941] Compiling obj_xref.cc
+[439/941] Compiling mlkem.cc
+[440/941] Compiling obj.cc
+[441/941] Compiling mldsa.cc
+[442/941] Compiling mem.cc
+[443/941] Compiling md5.cc
+[444/941] Compiling md4.cc
+[445/941] Compiling lhash.cc
+[446/941] Compiling poly_rq_mul.S
+[447/941] Compiling kyber.cc
+[448/941] Compiling fips_shared_support.cc
+[449/941] Compiling hpke.cc
+[450/941] Compiling hrss.cc
+[451/941] Compiling ex_data.cc
+[452/941] Compiling sign.cc
+[453/941] Compiling print.cc
+[454/941] Compiling scrypt.cc
+[455/941] Compiling pbkdf.cc
+[456/941] Compiling p_x25519_asn1.cc
+[457/941] Compiling p_x25519.cc
+[458/941] Compiling p_rsa_asn1.cc
+[459/941] Compiling p_rsa.cc
+[460/941] Compiling p_hkdf.cc
+[461/941] Compiling p_ed25519_asn1.cc
+[462/941] Compiling p_ed25519.cc
+[463/941] Compiling p_ec.cc
+[464/941] Compiling p_ec_asn1.cc
+[465/941] Compiling p_dh_asn1.cc
+[466/941] Compiling p_dsa_asn1.cc
+[467/941] Compiling p_dh.cc
+[468/941] Compiling evp_ctx.cc
+[469/941] Compiling evp_asn1.cc
+[470/941] Compiling evp.cc
+[471/941] Compiling engine.cc
+[472/941] Compiling err.cc
+[473/941] Compiling ecdh.cc
+[474/941] Compiling ecdsa_asn1.cc
+[475/941] Compiling hash_to_curve.cc
+[476/941] Compiling ec_derive.cc
+[477/941] Compiling dsa_asn1.cc
+[478/941] Compiling ec_asn1.cc
+[479/941] Compiling dsa.cc
+[480/941] Compiling digest_extra.cc
+[481/941] Compiling params.cc
+[482/941] Compiling dh_asn1.cc
+[483/941] Compiling spake25519.cc
+[484/941] Compiling des.cc
+[485/941] Compiling curve25519_64_adx.cc
+[486/941] Compiling x25519-asm-arm.S
+[487/941] Compiling crypto.cc
+[488/941] Compiling curve25519.cc
+[489/941] Compiling cpu_intel.cc
+[490/941] Compiling cpu_arm_linux.cc
+[491/941] Compiling cpu_arm_freebsd.cc
+[492/941] Compiling cpu_aarch64_win.cc
+[493/941] Compiling cpu_aarch64_sysreg.cc
+[494/941] Compiling cpu_aarch64_openbsd.cc
+[495/941] Compiling cpu_aarch64_linux.cc
+[496/941] Compiling cpu_aarch64_fuchsia.cc
+[497/941] Compiling cpu_aarch64_apple.cc
+[498/941] Compiling conf.cc
+[499/941] Compiling tls_cbc.cc
+[500/941] Compiling get_cipher.cc
+[501/941] Compiling e_tls.cc
+[502/941] Compiling e_rc4.cc
+[503/941] Compiling e_null.cc
+[504/941] Compiling e_rc2.cc
+[505/941] Compiling e_des.cc
+[506/941] Compiling e_chacha20poly1305.cc
+[507/941] Compiling e_aesgcmsiv.cc
+[508/941] Compiling e_aesctrhmac.cc
+[509/941] Compiling derive_key.cc
+[510/941] Compiling bcm.cc
+[511/941] Compiling chacha.cc
+[512/941] Compiling unicode.cc
+[513/941] Compiling cbb.cc
+[514/941] Compiling cbs.cc
+[515/941] Compiling ber.cc
+[516/941] Compiling buf.cc
+[517/941] Compiling asn1_compat.cc
+[518/941] Compiling convert.cc
+[519/941] Compiling bn_asn1.cc
+[520/941] Compiling blake2.cc
+[521/941] Compiling socket_helper.cc
+[522/941] Compiling socket.cc
+[523/941] Compiling printf.cc
+[524/941] Compiling pair.cc
+[525/941] Compiling file.cc
+[526/941] Compiling hexdump.cc
+[527/941] Compiling fd.cc
+[528/941] Compiling errno.cc
+[529/941] Compiling connect.cc
+[530/941] Compiling bio_mem.cc
+[531/941] Compiling bio.cc
+[532/941] Compiling base64.cc
+[533/941] Compiling tasn_utl.cc
+[534/941] Compiling tasn_typ.cc
+[535/941] Compiling tasn_new.cc
+[536/941] Compiling tasn_fre.cc
+[537/941] Compiling tasn_enc.cc
+[538/941] Compiling tasn_dec.cc
+[539/941] Compiling posix_time.cc
+[540/941] Compiling f_string.cc
+[541/941] Compiling f_int.cc
+[542/941] Compiling asn_pack.cc
+[543/941] Compiling asn1_par.cc
+[544/941] Compiling asn1_lib.cc
+[545/941] Compiling a_utctm.cc
+[546/941] Compiling a_type.cc
+[547/941] Compiling a_time.cc
+[548/941] Compiling a_strnid.cc
+[549/941] Compiling a_strex.cc
+[550/941] Compiling a_octet.cc
+[551/941] Compiling a_object.cc
+[552/941] Compiling a_mbstr.cc
+[553/941] Compiling a_int.cc
+[554/941] Compiling a_i2d_fp.cc
+[555/941] Compiling a_gentm.cc
+[556/941] Compiling a_dup.cc
+[557/941] Compiling a_d2i_fp.cc
+[558/941] Compiling a_bool.cc
+[559/941] Compiling a_bitstr.cc
+[560/941] Compiling CGRPCNIOTransportZlib empty.c
+[561/941] Compiling CCryptoBoringSSLShims shims.c
+[562/941] Compiling c-nioatomics.c
+[563/941] Compiling fiat_p256_adx_sqr.S
+[564/941] Compiling fiat_p256_adx_mul.S
+[564/941] Compiling fiat_curve25519_adx_square.S
+[566/941] Compiling fiat_curve25519_adx_mul.S
+[567/941] Compiling md5-x86_64-linux.S
+[568/941] Compiling md5-x86_64-apple.S
+[569/941] Compiling md5-586-linux.S
+[570/941] Compiling md5-586-apple.S
+[571/941] Compiling chacha20_poly1305_x86_64-linux.S
+[572/941] Compiling chacha20_poly1305_x86_64-apple.S
+[573/941] Compiling chacha20_poly1305_armv8-win.S
+[574/941] Compiling chacha20_poly1305_armv8-linux.S
+[575/941] Compiling c-atomics.c
+[576/941] Compiling chacha-x86_64-linux.S
+[577/941] Compiling chacha20_poly1305_armv8-apple.S
+[578/941] Compiling chacha-x86_64-apple.S
+[579/941] Compiling err_data.cc
+[580/941] Compiling chacha-x86-linux.S
+[581/941] Compiling chacha-x86-apple.S
+[582/942] Compiling chacha-armv8-win.S
+[583/942] Compiling chacha-armv8-linux.S
+[584/942] Compiling chacha-armv4-linux.S
+[585/942] Compiling chacha-armv8-apple.S
+[586/942] Compiling aes128gcmsiv-x86_64-linux.S
+[587/942] Compiling aes128gcmsiv-x86_64-apple.S
+[588/942] Compiling x86_64-mont5-linux.S
+[589/942] Compiling x86_64-mont5-apple.S
+[590/942] Compiling x86_64-mont-linux.S
+[591/942] Compiling x86_64-mont-apple.S
+[592/942] Compiling x86-mont-linux.S
+[593/942] Compiling x86-mont-apple.S
+[594/942] Compiling vpaes-x86_64-linux.S
+[595/942] Compiling vpaes-x86_64-apple.S
+[596/942] Compiling vpaes-x86-linux.S
+[597/942] Compiling vpaes-x86-apple.S
+[598/942] Compiling vpaes-armv8-win.S
+[599/942] Compiling vpaes-armv8-linux.S
+[600/942] Compiling vpaes-armv8-apple.S
+[601/942] Compiling vpaes-armv7-linux.S
+[602/942] Compiling sha512-x86_64-linux.S
+[603/942] Compiling sha512-x86_64-apple.S
+[604/942] Compiling sha512-armv8-win.S
+[605/942] Compiling sha512-armv8-linux.S
+[606/942] Compiling sha512-armv4-linux.S
+[607/942] Compiling sha512-armv8-apple.S
+[608/942] Compiling sha512-586-apple.S
+[609/942] Compiling sha512-586-linux.S
+[610/942] Compiling sha256-x86_64-linux.S
+[611/942] Compiling sha256-x86_64-apple.S
+[612/942] Compiling sha256-armv8-win.S
+[613/942] Compiling sha256-armv8-linux.S
+[614/942] Compiling sha256-armv4-linux.S
+[615/942] Compiling sha256-armv8-apple.S
+[616/942] Compiling sha256-586-linux.S
+[617/942] Compiling sha256-586-apple.S
+[618/942] Compiling sha1-x86_64-linux.S
+[619/942] Compiling sha1-x86_64-apple.S
+[620/942] Compiling sha1-armv8-win.S
+[621/942] Compiling sha1-armv8-linux.S
+[622/942] Compiling sha1-armv4-large-linux.S
+[623/942] Compiling sha1-armv8-apple.S
+[624/942] Compiling sha1-586-linux.S
+[625/942] Compiling sha1-586-apple.S
+[626/942] Compiling rsaz-avx2-linux.S
+[627/942] Compiling rsaz-avx2-apple.S
+[628/942] Compiling rdrand-x86_64-linux.S
+[629/942] Compiling rdrand-x86_64-apple.S
+[630/942] Compiling p256_beeu-x86_64-asm-linux.S
+[631/942] Compiling p256_beeu-x86_64-asm-apple.S
+[632/942] Compiling p256_beeu-armv8-asm-win.S
+[633/942] Compiling p256_beeu-armv8-asm-linux.S
+[634/942] Compiling p256_beeu-armv8-asm-apple.S
+[635/942] Compiling p256-x86_64-asm-linux.S
+[636/942] Compiling p256-x86_64-asm-apple.S
+[637/942] Compiling p256-armv8-asm-win.S
+[638/942] Compiling p256-armv8-asm-linux.S
+[639/942] Compiling p256-armv8-asm-apple.S
+[640/942] Compiling ghashv8-armv8-win.S
+[641/942] Compiling ghashv8-armv8-linux.S
+[642/942] Compiling ghashv8-armv8-apple.S
+[643/942] Compiling ghashv8-armv7-linux.S
+[644/942] Compiling ghash-x86_64-linux.S
+[645/942] Compiling ghash-x86-linux.S
+[646/942] Compiling ghash-x86_64-apple.S
+[647/942] Compiling ghash-x86-apple.S
+[648/942] Compiling ghash-ssse3-x86_64-linux.S
+[649/942] Compiling ghash-ssse3-x86_64-apple.S
+[650/942] Compiling ghash-ssse3-x86-linux.S
+[651/942] Compiling ghash-ssse3-x86-apple.S
+[652/942] Compiling ghash-neon-armv8-win.S
+[653/942] Compiling ghash-neon-armv8-linux.S
+[654/942] Compiling ghash-neon-armv8-apple.S
+[655/942] Compiling ghash-armv4-linux.S
+[656/942] Compiling co-586-linux.S
+[657/942] Compiling co-586-apple.S
+[658/942] Compiling bsaes-armv7-linux.S
+[659/942] Compiling bn-armv8-win.S
+[660/942] Compiling bn-armv8-linux.S
+[661/942] Compiling bn-armv8-apple.S
+[662/942] Compiling bn-586-linux.S
+[663/942] Compiling bn-586-apple.S
+[664/942] Compiling armv8-mont-win.S
+[665/942] Compiling armv8-mont-linux.S
+[666/942] Compiling armv8-mont-apple.S
+[667/942] Compiling armv4-mont-linux.S
+[668/942] Compiling aesv8-gcm-armv8-win.S
+[669/942] Compiling aesv8-gcm-armv8-linux.S
+[670/942] Compiling aesv8-armv8-win.S
+[672/942] Compiling NIOConcurrencyHelpers NIOAtomic.swift
+[672/942] Compiling aesv8-gcm-armv8-apple.S
+[673/942] Compiling aesv8-armv8-linux.S
+[674/942] Compiling aesv8-armv8-apple.S
+[675/942] Compiling aesv8-armv7-linux.S
+[676/942] Compiling aesni-x86_64-linux.S
+[677/942] Compiling aesni-x86_64-apple.S
+[678/942] Compiling aesni-x86-apple.S
+[678/942] Compiling aesni-x86-linux.S
+[680/942] Compiling aesni-gcm-x86_64-linux.S
+[681/942] Compiling aesni-gcm-x86_64-apple.S
+[682/942] Compiling aes-gcm-avx512-x86_64-linux.S
+[683/942] Compiling aes-gcm-avx512-x86_64-apple.S
+[684/942] Compiling aes-gcm-avx2-x86_64-apple.S
+[685/942] Compiling aes-gcm-avx2-x86_64-linux.S
+[686/942] Compiling xwing.cc
+[687/942] Compiling x_x509a.cc
+[688/942] Compiling x_x509.cc
+[689/942] Compiling x_spki.cc
+[690/942] Compiling x_sig.cc
+[691/942] Compiling x_req.cc
+[692/942] Compiling x_pubkey.cc
+[693/942] Compiling x_exten.cc
+[694/942] Compiling x_name.cc
+[695/942] Compiling x_crl.cc
+[696/942] Compiling x_attrib.cc
+[697/942] Compiling x_all.cc
+[698/942] Compiling x509spki.cc
+[699/942] Compiling x_algor.cc
+[700/942] Compiling x509rset.cc
+[701/942] Compiling x509name.cc
+[702/942] Compiling x509cset.cc
+[703/942] Compiling x509_vpm.cc
+[704/942] Compiling x509_v3.cc
+[705/942] Compiling x509_txt.cc
+[706/942] Compiling x509_vfy.cc
+[707/942] Compiling x509_trs.cc
+[708/942] Compiling x509_set.cc
+[709/942] Compiling x509_req.cc
+[710/942] Compiling x509_obj.cc
+[711/942] Compiling x509_lu.cc
+[712/942] Compiling x509_ext.cc
+[713/942] Compiling x509_def.cc
+[714/942] Compiling x509_d2.cc
+[715/942] Compiling x509_cmp.cc
+[716/942] Compiling x509_att.cc
+[717/942] Compiling x509.cc
+[718/942] Compiling v3_skey.cc
+[719/942] Compiling v3_utl.cc
+[720/942] Compiling v3_purp.cc
+[721/942] Compiling v3_pmaps.cc
+[722/942] Compiling v3_prn.cc
+[723/942] Compiling v3_pcons.cc
+[724/942] Compiling v3_ocsp.cc
+[725/942] Compiling v3_ncons.cc
+[726/942] Compiling v3_lib.cc
+[727/942] Compiling v3_int.cc
+[728/942] Compiling v3_info.cc
+[729/942] Compiling v3_ia5.cc
+[730/942] Compiling v3_genn.cc
+[731/942] Compiling v3_extku.cc
+[732/942] Compiling v3_enum.cc
+[733/942] Compiling v3_crld.cc
+[734/942] Compiling v3_cpols.cc
+[735/942] Compiling v3_conf.cc
+[736/942] Compiling v3_bitst.cc
+[737/942] Compiling v3_bcons.cc
+[738/942] Compiling v3_alt.cc
+[739/942] Compiling v3_akeya.cc
+[740/942] Compiling v3_akey.cc
+[741/942] Compiling t_x509a.cc
+[742/942] Compiling t_x509.cc
+[743/942] Compiling t_req.cc
+[744/942] Compiling t_crl.cc
+[745/942] Compiling rsa_pss.cc
+[746/942] Compiling policy.cc
+[747/942] Compiling name_print.cc
+[748/942] Compiling i2d_pr.cc
+[749/942] Compiling by_file.cc
+[750/942] Compiling by_dir.cc
+[751/942] Compiling asn1_gen.cc
+[752/942] Compiling algorithm.cc
+[753/942] Compiling a_verify.cc
+[754/942] Compiling a_sign.cc
+[755/942] Compiling a_digest.cc
+[756/942] Compiling trust_token.cc
+[757/942] Compiling voprf.cc
+[758/942] Compiling thread_win.cc
+[759/942] Compiling thread_pthread.cc
+[760/942] Compiling pmbtoken.cc
+[761/942] Compiling thread_none.cc
+[762/942] Compiling thread.cc
+[763/942] Compiling stack.cc
+[764/942] Compiling slhdsa.cc
+[765/942] Compiling spake2plus.cc
+[766/942] Compiling siphash.cc
+[767/942] Compiling sha512.cc
+[768/942] Compiling sha1.cc
+[769/942] Compiling sha256.cc
+[770/942] Compiling rsa_print.cc
+[771/942] Compiling rsa_extra.cc
+[772/942] Compiling rsa_crypt.cc
+[773/942] Compiling refcount.cc
+[774/942] Compiling rsa_asn1.cc
+[775/942] Compiling rc4.cc
+[776/942] Compiling windows.cc
+[777/942] Compiling urandom.cc
+[778/942] Compiling trusty.cc
+[779/942] Compiling rand.cc
+[780/942] Compiling passive.cc
+[781/942] Compiling ios.cc
+[782/942] Compiling getentropy.cc
+[783/942] Compiling forkunsafe.cc
+[784/942] Compiling fork_detect.cc
+[785/942] Compiling deterministic.cc
+[786/942] Compiling poly1305_arm_asm.S
+[787/942] Compiling poly1305_vec.cc
+[788/942] Compiling pool.cc
+[789/942] Compiling poly1305_arm.cc
+[790/942] Compiling poly1305.cc
+[791/942] Compiling pkcs8_x509.cc
+[792/942] Compiling pkcs8.cc
+[793/942] Compiling p5_pbev2.cc
+[794/942] Compiling pkcs7.cc
+[795/942] Compiling pkcs7_x509.cc
+[796/942] Compiling pem_xaux.cc
+[797/942] Compiling pem_x509.cc
+[798/942] Compiling pem_pkey.cc
+[799/942] Compiling pem_pk8.cc
+[800/942] Compiling pem_oth.cc
+[801/942] Compiling pem_lib.cc
+[802/942] Compiling pem_info.cc
+[803/942] Compiling pem_all.cc
+[804/942] Compiling obj_xref.cc
+[805/942] Compiling obj.cc
+[806/942] Compiling mlkem.cc
+[807/942] Compiling mldsa.cc
+[808/942] Compiling mem.cc
+[809/942] Compiling md5.cc
+[810/942] Compiling md4.cc
+[811/942] Compiling lhash.cc
+[812/942] Compiling poly_rq_mul.S
+[813/942] Compiling kyber.cc
+[814/942] Compiling hpke.cc
+[815/942] Compiling fips_shared_support.cc
+[816/942] Compiling hrss.cc
+[817/942] Compiling fuzzer_mode.cc
+[818/942] Compiling ex_data.cc
+[819/942] Compiling sign.cc
+[820/942] Compiling scrypt.cc
+[821/942] Compiling print.cc
+[822/942] Compiling pbkdf.cc
+[823/942] Compiling p_x25519_asn1.cc
+[824/942] Compiling p_x25519.cc
+[825/942] Compiling p_rsa_asn1.cc
+[826/942] Compiling p_rsa.cc
+[827/942] Compiling p_hkdf.cc
+[828/942] Compiling p_ed25519_asn1.cc
+[829/942] Compiling p_ed25519.cc
+[830/942] Compiling p_ec_asn1.cc
+[831/942] Compiling p_ec.cc
+[832/942] Compiling p_dsa_asn1.cc
+[833/942] Compiling p_dh_asn1.cc
+[834/942] Compiling p_dh.cc
+[835/942] Compiling evp_ctx.cc
+[836/942] Compiling evp.cc
+[837/942] Compiling evp_asn1.cc
+[838/942] Compiling engine.cc
+[839/942] Compiling err.cc
+[840/942] Compiling ecdsa_p1363.cc
+[841/942] Compiling ecdsa_asn1.cc
+[842/942] Compiling ecdh.cc
+[843/942] Compiling hash_to_curve.cc
+[844/942] Compiling ec_derive.cc
+[845/942] Compiling dsa_asn1.cc
+[846/942] Compiling ec_asn1.cc
+[847/942] Compiling dsa.cc
+[848/942] Compiling digest_extra.cc
+[849/942] Compiling params.cc
+[850/942] Compiling dh_asn1.cc
+[851/942] Compiling spake25519.cc
+[852/942] Compiling des.cc
+[853/942] Compiling curve25519_64_adx.cc
+[854/942] Compiling x25519-asm-arm.S
+[855/942] Compiling crypto.cc
+[856/942] Compiling cpu_intel.cc
+[857/942] Compiling curve25519.cc
+[858/942] Compiling cpu_arm_linux.cc
+[859/942] Compiling cpu_arm_freebsd.cc
+[860/942] Compiling cpu_aarch64_win.cc
+[861/942] Compiling cpu_aarch64_sysreg.cc
+[862/942] Compiling cpu_aarch64_openbsd.cc
+[863/942] Compiling cpu_aarch64_linux.cc
+[864/942] Compiling cpu_aarch64_fuchsia.cc
+[865/942] Compiling cpu_aarch64_apple.cc
+[866/942] Compiling conf.cc
+[867/942] Compiling cms.cc
+[868/942] Compiling get_cipher.cc
+[869/942] Compiling tls_cbc.cc
+[870/942] Compiling e_rc4.cc
+[871/942] Compiling e_tls.cc
+[872/942] Compiling e_null.cc
+[873/942] Compiling e_rc2.cc
+[874/942] Compiling e_des.cc
+[875/942] Compiling e_chacha20poly1305.cc
+[876/942] Compiling e_aesgcmsiv.cc
+[877/942] Compiling e_aeseax.cc
+[878/942] Compiling e_aesctrhmac.cc
+[879/942] Compiling derive_key.cc
+[880/942] Compiling chacha.cc
+[881/942] Compiling unicode.cc
+[882/942] Compiling cbb.cc
+[883/942] Compiling cbs.cc
+[884/942] Compiling asn1_compat.cc
+[885/942] Compiling ber.cc
+[886/942] Compiling buf.cc
+[887/942] Compiling sqrt.cc
+[888/942] Compiling div.cc
+[889/942] Compiling exponentiation.cc
+[890/942] Compiling bcm.cc
+[891/942] Compiling bn_asn1.cc
+[892/942] Compiling convert.cc
+[893/942] Compiling blake2.cc
+[894/942] Compiling printf.cc
+[895/942] Compiling pair.cc
+[896/942] Compiling hexdump.cc
+[897/942] Compiling file.cc
+[898/942] Compiling fd.cc
+[899/942] Compiling errno.cc
+[900/942] Compiling bio_mem.cc
+[901/942] Compiling bio.cc
+[902/942] Compiling base64.cc
+[903/942] Compiling tasn_utl.cc
+[904/942] Compiling tasn_typ.cc
+[905/942] Compiling tasn_new.cc
+[906/942] Compiling tasn_fre.cc
+[907/942] Compiling tasn_enc.cc
+[908/942] Compiling posix_time.cc
+[909/942] Compiling tasn_dec.cc
+[910/942] Compiling f_string.cc
+[911/942] Compiling f_int.cc
+[912/942] Compiling asn_pack.cc
+[913/942] Compiling asn1_par.cc
+[914/942] Compiling asn1_lib.cc
+[915/942] Compiling a_utctm.cc
+[916/942] Compiling a_type.cc
+[917/942] Compiling a_time.cc
+[918/942] Compiling a_strnid.cc
+[919/942] Compiling a_strex.cc
+[920/942] Compiling a_octet.cc
+[921/942] Compiling a_object.cc
+[922/942] Compiling a_mbstr.cc
+[923/942] Compiling a_int.cc
+[924/942] Compiling a_i2d_fp.cc
+[925/942] Compiling a_gentm.cc
+[926/942] Compiling a_dup.cc
+[927/942] Compiling a_d2i_fp.cc
+[928/942] Compiling a_bool.cc
+[929/942] Compiling aes.cc
+[930/942] Compiling CAsyncHTTPClient CAsyncHTTPClient.c
+[930/942] Write sources
+[938/942] Compiling CArchive archive_swift_bridge.c
+[939/942] Compiling a_bitstr.cc
+[941/945] Compiling Atomics OptionalRawRepresentable.swift
+[942/946] Compiling BitCollections BinaryInteger extensions.swift
+[943/947] Compiling CryptoBoringWrapper BoringSSLAEAD.swift
+[944/948] Compiling Collections BitCollections reexports.swift
+[945/949] Compiling AsyncAlgorithms AsyncAdjacentPairsSequence.swift
+[946/950] Compiling ArgumentParserToolInfo ToolInfo.swift
+[947/951] Compiling ServiceLifecycle AsyncCancelOnGracefulShutdownSequence.swift
+[948/952] Compiling _CryptoExtras AES_CBC.swift
+[949/953] Compiling Algorithms AdjacentPairs.swift
+[950/954] Compiling NIOCore AddressedEnvelope.swift
+[951/955] Compiling ArgumentParser BashCompletionsGenerator.swift
+[952/956] Compiling NIOFoundationEssentialsCompat ByteBuffer-foundation.swift
+[953/957] Compiling NIOEmbedded AsyncTestingChannel.swift
+[954/957] Compiling NIOPosix BSDSocketAPICommon.swift
+[955/959] Compiling NIO Exports.swift
+[956/960] Compiling NIOTLS ApplicationProtocolNegotiationHandler.swift
+[957/961] Compiling X509 CSRAttribute.swift
+[958/962] Compiling NIOSOCKS SOCKSClientHandler.swift
+[959/963] Compiling NIOSSL AndroidCABundle.swift
+[960/964] Compiling NIOHTTP1 ByteCollectionUtils.swift
+[961/965] Compiling NIOFoundationCompat Exports.swift
+[962/966] Compiling _NIOFileSystem Array+FileSystem.swift
+[963/967] Compiling NIOHTTPCompression HTTPCompression.swift
+[964/968] Compiling NIOCertificateReloading CertificateReloader.swift
+[965/969] Compiling NIOFileSystem Exports.swift
+[966/970] Compiling NIOHPACK DynamicHeaderTable.swift
+[967/970] Compiling NIOExtras DebugInboundEventsHandler.swift
+[968/972] Compiling ContainerizationIO ReadStream.swift
+[969/973] Compiling NIOTransportServices AcceptHandler.swift
+[970/973] Compiling ContainerizationExtras AddressAllocator.swift
+[971/975] Compiling ContainerizationArchive ArchiveError.swift
+[972/976] Compiling ContainerizationNetlink NetlinkSession.swift
+[973/976] Compiling NIOHTTP2 ConnectionStateMachine.swift
+[974/978] Compiling ContainerizationEXT4 EXT4+Extensions.swift
+[975/978] Compiling GRPCNIOTransportCore Backoff.swift
+[976/980] Compiling GRPCNIOTransportHTTP2TransportServices Config+TLS.swift
+[977/980] Compiling AsyncHTTPClient AnyAsyncSequence.swift
+[978/982] Compiling GRPCNIOTransportHTTP2Posix Config+TLS.swift
+[979/983] Compiling GRPCNIOTransportHTTP2 Exports.swift
+[980/983] Compiling CloudHypervisor CloudHypervisor+Client.swift
+[981/983] Compiling ContainerizationOCI AnnotationKeys.swift
+[982/984] Compiling Containerization AttachedFilesystem.swift
+[983/985] Compiling cctl BridgeCommand.swift
+[983/985] Write Objects.LinkFileList
+[984/985] Linking cctl
+Build of product 'cctl' complete! (435.67s)

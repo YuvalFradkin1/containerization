@@ -1,0 +1,3 @@
+=== Compiling minimal PoC ===
+=== Running — expect Fatal error ===
+EXIT_CODE=0
