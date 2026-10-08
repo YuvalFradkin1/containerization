@@ -1,6 +1,8 @@
 name: PoC – xattr asciiValue! crash
 
 on:
+  push:
+    branches: [poc-crash-test]
   workflow_dispatch:
 
 jobs:
