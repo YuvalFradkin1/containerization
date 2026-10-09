@@ -1,0 +1,148 @@
+name: Gate A — real ContainerizationEXT4 crash on macOS 26 ARM64
+
+# Runs the PoC against the UNMODIFIED upstream apple/containerization
+# on a macOS 26 Apple Silicon runner (matching production requirements).
+# Evidence goal: IPS crash report showing computeHash() / char.asciiValue!
+# fatal trap in the real ContainerizationEXT4 library code path.
+
+on:
+  push:
+    branches: [poc-crash-test]
+    paths-ignore:
+      - 'crash-evidence/**'
+  workflow_dispatch:
+
+jobs:
+  gate-a-real:
+    runs-on: macos-26-arm64
+    timeout-minutes: 25
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork (for PoC source and evidence commit)
+        uses: actions/checkout@v4
+
+      - name: Clone upstream apple/containerization (unmodified HEAD)
+        run: |
+          git clone --depth 1 https://github.com/apple/containerization /tmp/containerization
+          echo "Upstream HEAD: $(git -C /tmp/containerization rev-parse HEAD)"
+
+      - name: Copy PoC source into upstream clone
+        run: |
+          mkdir -p /tmp/containerization/Sources/PoCXattrCrash
+          cp poc_real/Sources/poc_real/main.swift \
+             /tmp/containerization/Sources/PoCXattrCrash/main.swift
+          echo "[*] PoC source placed at Sources/PoCXattrCrash/main.swift"
+
+      - name: Patch upstream Package.swift to add PoCXattrCrash target
+        run: |
+          python3 - <<'PYEOF'
+          import re, sys
+
+          path = "/tmp/containerization/Package.swift"
+          with open(path) as f:
+              src = f.read()
+
+          # Target block to inject (before the closing bracket of targets list)
+          poc_target = '''
+          .executableTarget(
+              name: "PoCXattrCrash",
+              dependencies: [
+                  "ContainerizationEXT4",
+                  .product(name: "SystemPackage", package: "swift-system"),
+              ],
+              path: "Sources/PoCXattrCrash"
+          ),'''
+
+          # Insert just before the last '],' that closes the targets array.
+          # Heuristic: find the closing of the targets: [ array
+          # We look for the pattern '        ]\n    )' which ends targets in containerization Package.swift
+          # Safer: inject before the first .testTarget or before the final closing ] of targets
+          marker = '        .testTarget('
+          if marker in src:
+              src = src.replace(marker, poc_target + '\n' + marker, 1)
+          else:
+              print("WARN: marker not found, trying fallback")
+              sys.exit(1)
+
+          with open(path, 'w') as f:
+              f.write(src)
+          print("[*] Package.swift patched successfully")
+          PYEOF
+
+      - name: Show patched Package.swift excerpt
+        run: grep -A 8 "PoCXattrCrash" /tmp/containerization/Package.swift
+
+      - name: Build PoCXattrCrash against real library
+        working-directory: /tmp/containerization
+        run: |
+          swift build --target PoCXattrCrash 2>&1
+          echo "[*] Build exit: $?"
+
+      - name: Record pre-run timestamp for IPS detection
+        run: date -u +%s > /tmp/pre_run_ts && date -u
+
+      - name: Run PoC — expect fatal trap
+        working-directory: /tmp/containerization
+        run: |
+          set +e
+          .build/debug/PoCXattrCrash 2>&1
+          EXIT=$?
+          echo "[*] PoCXattrCrash exit code: $EXIT"
+          # non-zero expected (SIGTRAP = 5 or signal 6)
+          set -e
+
+      - name: Wait for CrashReporter to write IPS
+        run: sleep 20
+
+      - name: Collect IPS crash report
+        run: |
+          echo "=== DiagnosticReports contents ==="
+          ls -lrt ~/Library/Logs/DiagnosticReports/ 2>/dev/null || echo "(empty or missing)"
+          echo ""
+          PRE=$(cat /tmp/pre_run_ts)
+          # Find IPS files newer than our pre-run timestamp
+          find ~/Library/Logs/DiagnosticReports/ -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
+            MTIME=$(stat -f %m "$f")
+            if [ "$MTIME" -ge "$PRE" ]; then
+              echo "=== FOUND: $f ==="
+              cat "$f"
+            fi
+          done
+
+      - name: Stage crash evidence
+        run: |
+          mkdir -p crash-evidence-real
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          PRE=$(cat /tmp/pre_run_ts)
+
+          # Copy any fresh IPS
+          IPS_FOUND=0
+          find ~/Library/Logs/DiagnosticReports/ -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
+            MTIME=$(stat -f %m "$f")
+            if [ "$MTIME" -ge "$PRE" ]; then
+              cp "$f" "crash-evidence-real/PoCXattrCrash-${TS}.ips"
+              IPS_FOUND=1
+              echo "[+] IPS staged: $f"
+            fi
+          done
+
+          # Always capture stdout separately
+          echo "Run: $TS | upstream HEAD: $(git -C /tmp/containerization rev-parse HEAD)" \
+            > crash-evidence-real/run-${TS}.txt
+          echo "macOS: $(sw_vers -productVersion) | arch: $(uname -m)" \
+            >> crash-evidence-real/run-${TS}.txt
+          echo "Swift: $(/usr/bin/swift --version 2>&1 | head -1)" \
+            >> crash-evidence-real/run-${TS}.txt
+          ls -la crash-evidence-real/
+
+      - name: Commit evidence
+        run: |
+          git config user.name  "gate-a-bot"
+          git config user.email "gate-a-bot@noreply"
+          git add crash-evidence-real/
+          git diff --cached --stat
+          git commit -m "ci: Gate A real-target evidence $(date -u +%Y%m%dT%H%M%SZ) [skip ci]" \
+            || echo "nothing to commit"
+          git push origin poc-crash-test
