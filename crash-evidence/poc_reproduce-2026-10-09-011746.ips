@@ -1,12 +1,3 @@
-Waiting 10s for crash reports to be written...
-
-=== ~/Library/Logs/DiagnosticReports/ ===
-total 16
--rw-------@ 1 runner  _analyticsusers  7155 Oct  9 01:17 poc_reproduce-2026-10-09-011746.ips
-drwxrwx---  2 runner  _analyticsusers    64 Sep  7 03:52 Retired
-
-=== poc_reproduce crash reports ===
---- /Users/runner/Library/Logs/DiagnosticReports/poc_reproduce-2026-10-09-011746.ips ---
 {"app_name":"poc_reproduce","timestamp":"2026-10-09 01:17:46.00 +0000","app_version":"","slice_uuid":"a4f29612-b3c5-3e21-91c2-cb464b1056d0","build_version":"","platform":1,"share_with_app_devs":0,"is_first_party":1,"bug_type":"309","os_version":"macOS 15.7.9 (24G830)","roots_installed":0,"incident_id":"607FD8F6-DD11-4978-A98B-3CED50B26C61","name":"poc_reproduce"}
 {
   "uptime" : 130,
@@ -125,4 +116,3 @@ drwxrwx---  2 runner  _analyticsusers    64 Sep  7 03:52 Retired
   ]
 }
 }
-=== cctl crash reports ===
