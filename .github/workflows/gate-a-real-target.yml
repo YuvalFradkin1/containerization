@@ -95,8 +95,14 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           set +e
-          # Use swift run to avoid binary path issues on macOS 26
-          swift run --target PoCXattrCrash 2>&1
+          # Locate binary via --show-bin-path (swift run --target invalid in Swift 6)
+          BIN_DIR=$(swift build --target PoCXattrCrash --show-bin-path 2>/dev/null)
+          POC_BIN="$BIN_DIR/PoCXattrCrash"
+          echo "[*] BIN_DIR: $BIN_DIR"
+          echo "[*] Binary path: $POC_BIN"
+          ls -la "$POC_BIN" 2>/dev/null || echo "[-] Binary not at expected path"
+          echo "$POC_BIN" > /tmp/poc_bin_path
+          "$POC_BIN" 2>&1
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
           echo "$EXIT" > /tmp/poc_exit_code
