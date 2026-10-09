@@ -79,7 +79,13 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           swift build --target PoCXattrCrash 2>&1
-          echo "[*] Build exit: $?"
+          BUILD_EXIT=$?
+          echo "[*] Build exit: $BUILD_EXIT"
+          if [ "$BUILD_EXIT" -ne 0 ]; then
+            echo "[-] Build FAILED with exit $BUILD_EXIT"
+            exit $BUILD_EXIT
+          fi
+          echo "[*] Binary path: $(find .build -name PoCXattrCrash -type f 2>/dev/null)"
 
       - name: Record pre-run timestamp for IPS detection
         run: date -u +%s > /tmp/pre_run_ts && date -u
