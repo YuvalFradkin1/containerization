@@ -1,0 +1,123 @@
+{"app_name":"PoCXattrCrash","timestamp":"2026-10-09 04:35:49.00 +0000","app_version":"","slice_uuid":"4b87d854-7fb5-3368-bcd2-b8a9c3802933","build_version":"","platform":1,"share_with_app_devs":0,"is_first_party":1,"bug_type":"309","os_version":"macOS 26.6.2 (25G83)","roots_installed":0,"incident_id":"65B19EC3-F503-4974-9C7C-240B4E717D4A","name":"PoCXattrCrash"}
+{
+  "uptime" : 300,
+  "procRole" : "Unspecified",
+  "version" : 2,
+  "userID" : 501,
+  "deployVersion" : 210,
+  "modelCode" : "VirtualMac2,1",
+  "coalitionID" : 847,
+  "osVersion" : {
+    "train" : "macOS 26.6.2",
+    "build" : "25G83",
+    "releaseType" : "User"
+  },
+  "captureTime" : "2026-10-09 04:35:41.7552 +0000",
+  "codeSigningMonitor" : 0,
+  "incident" : "65B19EC3-F503-4974-9C7C-240B4E717D4A",
+  "pid" : 8718,
+  "translated" : false,
+  "cpuType" : "ARM-64",
+  "procLaunch" : "2026-10-09 04:35:22.0980 +0000",
+  "procStartAbsTime" : 6734462419,
+  "procExitAbsTime" : 7206135412,
+  "procName" : "PoCXattrCrash",
+  "procPath" : "\/private\/tmp\/*\/PoCXattrCrash",
+  "parentProc" : "Exited process",
+  "parentPid" : 8717,
+  "coalitionName" : "runner-provisioner",
+  "crashReporterKey" : "FF545E4E-3C15-99EC-CBE5-001A0AC4231B",
+  "appleIntelligenceStatus" : {"reasons":["selectedSiriLanguageIneligibleInfo(und)","countryLocationIneligible","deviceNotCapable","selectedSiriLanguageIneligible","countryBillingIneligible"],"state":"unavailable"},
+  "developerMode" : 1,
+  "responsiblePid" : 955,
+  "responsibleProc" : "hosted-compute-agent",
+  "codeSigningID" : "PoCXattrCrash-555549444b87d8547fb53368bcd2b8a9c3802933",
+  "codeSigningTeamID" : "",
+  "codeSigningFlags" : 570425349,
+  "codeSigningValidationCategory" : 10,
+  "codeSigningTrustLevel" : 4294967295,
+  "codeSigningAuxiliaryInfo" : 0,
+  "instructionByteStream" : {"beforePC":"6AUAtej8YNMoAQC14AMFquEDBqrkAwuq5QMJquYDB6rnAwqqnlj\/lw==","atPC":"IAAg1CgAgFKJn4FS6BMAuekHAPlIAIBS6AMAOWAaAJAAEDWRYxoAkA=="},
+  "bootSessionUUID" : "11399CAC-6018-423D-9649-EB6DD363BAA2",
+  "sip" : "disabled",
+  "exception" : {"codes":"0x0000000000000001, 0x0000000195381510","rawCodes":[1,6798447888],"type":"EXC_BREAKPOINT","signal":"SIGTRAP"},
+  "termination" : {"flags":0,"code":5,"namespace":"SIGNAL","indicator":"Trace\/BPT trap: 5","byProc":"exc handler","byPid":8718},
+  "os_fault" : {"process":"PoCXattrCrash"},
+  "extMods" : {"caller":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"system":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"targeted":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"warnings":0},
+  "faultingThread" : 0,
+  "threads" : [{"triggered":true,"id":27689,"threadState":{"x":[{"value":4370153472},{"value":3179},{"value":3179},{"value":8},{"value":4370269952},{"value":6130608368},{"value":101},{"value":0},{"value":259},{"value":259},{"value":4370269872},{"value":4370153552},{"value":5},{"value":3753},{"value":98},{"value":68},{"value":10570229804785418320},{"value":7275},{"value":0},{"value":6130608672},{"value":6130609680},{"value":0},{"value":6130613174},{"value":6130613173},{"value":6130613172},{"value":6130613171},{"value":6130613170},{"value":6130613169},{"value":6130613168}],"flavor":"ARM_THREAD_STATE64","lr":{"value":6798447888},"cpsr":{"value":1610616832},"fp":{"value":6130608640},"sp":{"value":6130608512},"esr":{"value":4060086273,"description":"(Breakpoint) brk 1"},"pc":{"value":6798447888,"matchesCrashFrame":1},"far":{"value":0}},"queue":"com.apple.main-thread","frames":[{"imageOffset":1451280,"symbol":"closure #1 in closure #1 in _assertionFailure(_:_:file:line:flags:)","symbolLocation":400,"imageIndex":1},{"imageOffset":1449956,"symbol":"_assertionFailure(_:_:file:line:flags:)","symbolLocation":276,"imageIndex":1},{"imageOffset":2511256,"sourceLine":60,"sourceFile":"EXT4+Xattrs.swift","symbol":"EXT4.ExtendedAttribute.hash.getter","imageIndex":0,"symbolLocation":564},{"imageOffset":2520352,"sourceLine":232,"sourceFile":"EXT4+Xattrs.swift","symbol":"static EXT4.FileXattrsState.write(buffer:attrs:start:delta:inline:)","imageIndex":0,"symbolLocation":2556},{"imageOffset":2523764,"sourceLine":188,"sourceFile":"EXT4+Xattrs.swift","symbol":"EXT4.FileXattrsState.writeBlockAttributes(buffer:)","imageIndex":0,"symbolLocation":1280},{"imageOffset":2306384,"sourceLine":482,"sourceFile":"EXT4+Formatter.swift","symbol":"EXT4.Formatter.create(path:link:mode:ts:buf:uid:gid:xattrs:recursion:fileBuffer:)","imageIndex":0,"symbolLocation":10692},{"imageOffset":8418328,"sourceLine":48,"sourceFile":"main.swift","symbol":"PoCXattrCrash_main","imageIndex":0,"symbolLocation":2892},{"imageOffset":132324,"symbol":"start","symbolLocation":6992,"imageIndex":2}]}],
+  "usedImages" : [
+  {
+    "source" : "P",
+    "arch" : "arm64",
+    "base" : 4336254976,
+    "size" : 12500992,
+    "uuid" : "4b87d854-7fb5-3368-bcd2-b8a9c3802933",
+    "path" : "\/private\/tmp\/*\/PoCXattrCrash",
+    "name" : "PoCXattrCrash"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6796996608,
+    "size" : 5908480,
+    "uuid" : "83794fb3-de9b-3d23-ab5e-2c1d5d30f134",
+    "path" : "\/usr\/lib\/swift\/libswiftCore.dylib",
+    "name" : "libswiftCore.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6466453504,
+    "size" : 734464,
+    "uuid" : "74e52480-c2bd-3c8d-812d-95fe2b74a096",
+    "path" : "\/usr\/lib\/dyld",
+    "name" : "dyld"
+  },
+  {
+    "size" : 0,
+    "source" : "A",
+    "base" : 0,
+    "uuid" : "00000000-0000-0000-0000-000000000000"
+  }
+],
+  "sharedCache" : {
+  "base" : 6465323008,
+  "size" : 6010847232,
+  "uuid" : "f2e86c53-6052-388b-ba71-5a0c9b569413"
+},
+  "vmSummary" : "ReadOnly portion of Libraries: Total=883.9M resident=0K(0%) swapped_out_or_unallocated=883.9M(100%)\nWritable regions: Total=85.5M written=257K(0%) resident=257K(0%) swapped_out=0K(0%) unallocated=85.2M(100%)\n\n                                VIRTUAL   REGION \nREGION TYPE                        SIZE    COUNT (non-coalesced) \n===========                     =======  ======= \nActivity Tracing                   256K        1 \nKernel Alloc Once                   32K        1 \nMALLOC                            12.7M        8 \nMALLOC guard page                 3728K        4 \nMemory Tag 22                     64.0M        1 \nSTACK GUARD                       56.0M        1 \nStack                             8176K        1 \n__AUTH                            1321K      149 \n__AUTH_CONST                      17.7M      340 \n__CTF                               824        1 \n__DATA                            4565K      297 \n__DATA_CONST                      16.6M      339 \n__DATA_DIRTY                      1320K      284 \n__FONT_DATA                        2352        1 \n__LINKEDIT                       583.4M        2 \n__OBJC_RO                         79.2M        1 \n__OBJC_RW                         2599K        1 \n__TEXT                           300.5M      351 \n__TPRO_CONST                       128K        2 \nmapped file                         80K        1 \npage table in kernel               257K        1 \nshared memory                       48K        2 \n===========                     =======  ======= \nTOTAL                              1.1G     1789 \n",
+  "legacyInfo" : {
+  "threadTriggered" : {
+    "queue" : "com.apple.main-thread"
+  }
+},
+  "logWritingSignature" : "35bb70ec6085fcaea4ae533e255269187d5e1c73",
+  "bug_type" : "309",
+  "roots_installed" : 0,
+  "trmStatus" : 2105344,
+  "trialInfo" : {
+  "rollouts" : [
+    {
+      "rolloutId" : "68095e8ecb2a9d1eaa8463c9",
+      "factorPackIds" : [
+        "68bf4eac9c31c5367e5529ca"
+      ],
+      "deploymentId" : 240000008
+    },
+    {
+      "rolloutId" : "699d4a6bb3c59721f0815d4a",
+      "factorPackIds" : [
+        "6a1e847dfae8a60fe3d88f20",
+        "6a1e847ffae8a60fe3d88f21",
+        "6a1e847fe5700036461dd986",
+        "6a1e848059a97e607a107573"
+      ],
+      "deploymentId" : 240000047
+    }
+  ],
+  "experiments" : [
+
+  ]
+}
+}
