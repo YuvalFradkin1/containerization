@@ -95,17 +95,19 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           set +e
-          # SwiftPM always creates .build/debug/<name> as a symlink after a successful build.
-          # Prefer that; fall back to a recursive find for the real binary.
-          POC_BIN=".build/debug/PoCXattrCrash"
-          if [ ! -e "$POC_BIN" ]; then
-            echo "[*] symlink not found, searching with find..."
-            POC_BIN=$(find .build -name "PoCXattrCrash" -not -type d 2>/dev/null | head -1)
+          # Build the absolute path explicitly — bash won't exec a relative path without ./
+          WORK=$(pwd)
+          POC_ABS="$WORK/.build/debug/PoCXattrCrash"
+          if [ ! -e "$POC_ABS" ]; then
+            echo "[*] .build/debug symlink missing, searching..."
+            FOUND=$(find "$WORK/.build" -name "PoCXattrCrash" -not -type d 2>/dev/null | head -1)
+            POC_ABS="$FOUND"
           fi
-          echo "[*] Binary: $POC_BIN"
-          ls -la "$POC_BIN" 2>/dev/null || echo "[-] Binary still not found"
-          echo "$(pwd)/$POC_BIN" > /tmp/poc_bin_path
-          "$POC_BIN"
+          echo "[*] Binary: $POC_ABS"
+          ls -la "$POC_ABS" 2>/dev/null || echo "[-] Binary still not found — did build succeed?"
+          echo "$POC_ABS" > /tmp/poc_bin_path
+          chmod +x "$POC_ABS" 2>/dev/null
+          "$POC_ABS"
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
           echo "$EXIT" > /tmp/poc_exit_code
