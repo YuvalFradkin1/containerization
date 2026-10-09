@@ -1,0 +1,176 @@
+name: Gate A-OCI — end-to-end OCI ingress crash on macOS 26 ARM64
+
+# Exercises the FULL OCI unpack ingress path:
+#   crafted pax+gzip tar layer → EXT4.Formatter.unpack() → crash
+# This proves attacker-controlled OCI archive xattr reaches EXT4+Xattrs.swift:60.
+# Evidence goal: IPS crash report with EXT4.ExtendedAttribute.hash.getter / char.asciiValue!
+# in the frame sequence: unpack → unpackEntries → create → writeBlockAttributes → hash.getter
+
+on:
+  push:
+    branches: [poc-crash-test]
+    paths-ignore:
+      - 'crash-evidence/**'
+      - 'crash-evidence-real/**'
+      - 'crash-evidence-oci/**'
+  workflow_dispatch:
+
+jobs:
+  gate-a-oci:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork (for PoC source and evidence commit)
+        uses: actions/checkout@v4
+
+      - name: Clone upstream apple/containerization (unmodified HEAD)
+        run: |
+          git clone --depth 1 https://github.com/apple/containerization /tmp/containerization
+          echo "Upstream HEAD: $(git -C /tmp/containerization rev-parse HEAD)"
+
+      - name: Copy OCI ingress PoC source into upstream clone
+        run: |
+          mkdir -p /tmp/containerization/Sources/PoCOCICrash
+          cp poc_oci/Sources/poc_oci/main.swift \
+             /tmp/containerization/Sources/PoCOCICrash/main.swift
+          echo "[*] OCI PoC source placed at Sources/PoCOCICrash/main.swift"
+
+      - name: Patch upstream Package.swift to add PoCOCICrash target
+        run: |
+          python3 - <<'PYEOF'
+          import re, sys
+
+          path = "/tmp/containerization/Package.swift"
+          with open(path) as f:
+              src = f.read()
+
+          poc_target = '''
+          .executableTarget(
+              name: "PoCOCICrash",
+              dependencies: [
+                  "ContainerizationEXT4",
+                  "ContainerizationArchive",
+                  .product(name: "SystemPackage", package: "swift-system"),
+              ],
+              path: "Sources/PoCOCICrash"
+          ),'''
+
+          marker = '        .testTarget('
+          if marker in src:
+              src = src.replace(marker, poc_target + '\n' + marker, 1)
+          else:
+              print("WARN: marker not found, trying fallback")
+              sys.exit(1)
+
+          with open(path, 'w') as f:
+              f.write(src)
+          print("[*] Package.swift patched successfully")
+          PYEOF
+
+      - name: Show patched Package.swift excerpt
+        run: grep -A 10 "PoCOCICrash" /tmp/containerization/Package.swift
+
+      - name: Build PoCOCICrash against real library
+        working-directory: /tmp/containerization
+        run: |
+          swift build --target PoCOCICrash 2>&1
+          BUILD_EXIT=$?
+          echo "[*] Build exit: $BUILD_EXIT"
+          if [ "$BUILD_EXIT" -ne 0 ]; then
+            echo "[-] Build FAILED with exit $BUILD_EXIT"
+            exit $BUILD_EXIT
+          fi
+          echo "[*] Binary:"
+          find .build -name "PoCOCICrash" 2>/dev/null
+
+      - name: Record pre-run timestamp for IPS detection
+        run: date -u +%s > /tmp/pre_run_ts && date -u
+
+      - name: Run OCI ingress PoC — expect fatal trap via unpack path
+        working-directory: /tmp/containerization
+        run: |
+          set +e
+          echo "[*] Attempting: swift run PoCOCICrash"
+          swift run PoCOCICrash 2>&1
+          EXIT=$?
+          echo "[*] PoCOCICrash exit code: $EXIT"
+          if [ "$EXIT" -eq 64 ] || [ "$EXIT" -eq 1 ]; then
+            echo "[*] swift run failed ($EXIT), trying direct binary..."
+            BIN=$(swift build --target PoCOCICrash --show-bin-path 2>/dev/null)/PoCOCICrash
+            echo "[*] Direct binary path: $BIN"
+            ls -la "$BIN" 2>/dev/null
+            "$BIN" 2>&1
+            EXIT=$?
+            echo "[*] Direct binary exit code: $EXIT"
+            echo "$BIN" > /tmp/poc_oci_bin_path
+          else
+            echo "swift run PoCOCICrash" > /tmp/poc_oci_bin_path
+          fi
+          echo "$EXIT" > /tmp/poc_oci_exit_code
+          set -e
+
+      - name: Wait for CrashReporter to write IPS
+        run: sleep 30
+
+      - name: Collect IPS crash report
+        run: |
+          POC_EXIT=$(cat /tmp/poc_oci_exit_code 2>/dev/null || echo "?")
+          echo "[*] PoCOCICrash exit code: $POC_EXIT"
+          PRE=$(cat /tmp/pre_run_ts)
+          echo "[*] Searching for PoCOCICrash*.ips newer than $PRE..."
+          for DIR in "$HOME/Library/Logs/DiagnosticReports" "/Library/Logs/DiagnosticReports" "$HOME/Library/Logs/CrashReporter"; do
+            find "$DIR" -name "PoCOCICrash*.ips" 2>/dev/null | while read f; do
+              MTIME=$(stat -f %m "$f")
+              if [ "$MTIME" -ge "$PRE" ]; then
+                echo "=== FOUND: $f ==="
+                cat "$f"
+              fi
+            done
+          done
+
+      - name: Stage OCI ingress crash evidence
+        run: |
+          mkdir -p crash-evidence-oci
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          PRE=$(cat /tmp/pre_run_ts)
+          POC_EXIT=$(cat /tmp/poc_oci_exit_code 2>/dev/null || echo "?")
+
+          for DIR in "$HOME/Library/Logs/DiagnosticReports" "/Library/Logs/DiagnosticReports" "$HOME/Library/Logs/CrashReporter"; do
+            find "$DIR" -name "PoCOCICrash*.ips" 2>/dev/null | while read f; do
+              MTIME=$(stat -f %m "$f")
+              if [ "$MTIME" -ge "$PRE" ]; then
+                cp "$f" "crash-evidence-oci/PoCOCICrash-${TS}.ips"
+                echo "[+] IPS staged from $f"
+              fi
+            done
+          done
+
+          echo "Run: $TS | upstream HEAD: $(git -C /tmp/containerization rev-parse HEAD)" \
+            > crash-evidence-oci/run-${TS}.txt
+          echo "macOS: $(sw_vers -productVersion) | arch: $(uname -m)" \
+            >> crash-evidence-oci/run-${TS}.txt
+          echo "Swift: $(/usr/bin/swift --version 2>&1 | head -1)" \
+            >> crash-evidence-oci/run-${TS}.txt
+          echo "PoC exit code: $POC_EXIT" \
+            >> crash-evidence-oci/run-${TS}.txt
+          echo "OCI ingress path: unpack(source:format:.paxRestricted,compression:.gzip)" \
+            >> crash-evidence-oci/run-${TS}.txt
+          ls -la crash-evidence-oci/
+
+      - name: Commit OCI ingress evidence
+        run: |
+          git config user.name  "gate-a-oci-bot"
+          git config user.email "noreply@anthropic.com"
+          git add crash-evidence-oci/
+          git diff --cached --stat
+          git commit -m "ci: Gate A-OCI ingress evidence $(date -u +%Y%m%dT%H%M%SZ) [skip ci]" \
+            || echo "nothing to commit"
+          for i in 1 2 3; do
+            git push origin poc-crash-test && break
+            echo "[retry $i] push rejected, rebasing onto remote..."
+            git fetch origin poc-crash-test
+            git rebase FETCH_HEAD
+          done
