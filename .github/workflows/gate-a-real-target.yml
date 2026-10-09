@@ -87,6 +87,8 @@ jobs:
       - name: Run PoC — expect fatal trap
         working-directory: /tmp/containerization
         run: |
+          echo "[*] Build products in .build/debug/:"
+          ls -la .build/debug/ | grep -v '\.o$\|\.swp$\|\.d$' | head -30
           set +e
           .build/debug/PoCXattrCrash 2>&1
           EXIT=$?
