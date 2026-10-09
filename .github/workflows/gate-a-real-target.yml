@@ -85,8 +85,14 @@ jobs:
             echo "[-] Build FAILED with exit $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
-          echo "[*] Binary (file/symlink): $(find .build -name PoCXattrCrash -not -type d 2>/dev/null)"
-          ls -la .build/debug/PoCXattrCrash 2>/dev/null || echo "no symlink at .build/debug/"
+          echo "[*] .build/debug/ contents:"
+          ls -la .build/debug/ 2>/dev/null || echo "(missing)"
+          echo "[*] All PoCXattrCrash entries under .build:"
+          find .build -name "PoCXattrCrash" 2>/dev/null
+          echo "[*] --show-bin-path:"
+          swift build --target PoCXattrCrash --show-bin-path 2>&1
+          echo "[*] Resolved pwd:"
+          pwd -P
 
       - name: Record pre-run timestamp for IPS detection
         run: date -u +%s > /tmp/pre_run_ts && date -u
@@ -95,21 +101,24 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           set +e
-          # Build the absolute path explicitly — bash won't exec a relative path without ./
-          WORK=$(pwd)
-          POC_ABS="$WORK/.build/debug/PoCXattrCrash"
-          if [ ! -e "$POC_ABS" ]; then
-            echo "[*] .build/debug symlink missing, searching..."
-            FOUND=$(find "$WORK/.build" -name "PoCXattrCrash" -not -type d 2>/dev/null | head -1)
-            POC_ABS="$FOUND"
-          fi
-          echo "[*] Binary: $POC_ABS"
-          ls -la "$POC_ABS" 2>/dev/null || echo "[-] Binary still not found — did build succeed?"
-          echo "$POC_ABS" > /tmp/poc_bin_path
-          chmod +x "$POC_ABS" 2>/dev/null
-          "$POC_ABS"
+          # Primary: swift run PoCXattrCrash (product name, no --target, valid in Swift 6)
+          echo "[*] Attempting: swift run PoCXattrCrash"
+          swift run PoCXattrCrash 2>&1
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
+          # If swift run itself errored (not a crash), fall back to direct binary
+          if [ "$EXIT" -eq 64 ] || [ "$EXIT" -eq 1 ]; then
+            echo "[*] swift run failed ($EXIT), trying direct binary..."
+            BIN=$(swift build --target PoCXattrCrash --show-bin-path 2>/dev/null)/PoCXattrCrash
+            echo "[*] Direct binary path: $BIN"
+            ls -la "$BIN" 2>/dev/null
+            "$BIN" 2>&1
+            EXIT=$?
+            echo "[*] Direct binary exit code: $EXIT"
+            echo "$BIN" > /tmp/poc_bin_path
+          else
+            echo "swift run PoCXattrCrash" > /tmp/poc_bin_path
+          fi
           echo "$EXIT" > /tmp/poc_exit_code
           # non-zero expected (SIGTRAP=5, SIGABRT=6, or 132/134 from signal)
           set -e
