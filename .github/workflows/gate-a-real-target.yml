@@ -87,10 +87,18 @@ jobs:
       - name: Run PoC — expect fatal trap
         working-directory: /tmp/containerization
         run: |
-          echo "[*] Build products in .build/debug/:"
-          ls -la .build/debug/ | grep -v '\.o$\|\.swp$\|\.d$' | head -30
+          echo "[*] Locating PoCXattrCrash binary..."
+          BIN=$(find /tmp/containerization/.build -name "PoCXattrCrash" -type f 2>/dev/null | head -1)
+          echo "[*] Binary found at: $BIN"
+          echo "$BIN" > /tmp/poc_bin_path
+          if [ -z "$BIN" ]; then
+            echo "[-] Binary not found! .build layout:"
+            find /tmp/containerization/.build -maxdepth 4 -not -name "*.o" -not -name "*.d" 2>/dev/null | head -50
+            echo "127" > /tmp/poc_exit_code
+            exit 0
+          fi
           set +e
-          .build/debug/PoCXattrCrash 2>&1
+          "$BIN" 2>&1
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
           echo "$EXIT" > /tmp/poc_exit_code
@@ -154,6 +162,8 @@ jobs:
           echo "Swift: $(/usr/bin/swift --version 2>&1 | head -1)" \
             >> crash-evidence-real/run-${TS}.txt
           echo "PoC exit code: $POC_EXIT" \
+            >> crash-evidence-real/run-${TS}.txt
+          echo "PoC binary: $(cat /tmp/poc_bin_path 2>/dev/null || echo unknown)" \
             >> crash-evidence-real/run-${TS}.txt
           ls -la crash-evidence-real/
 
