@@ -16,6 +16,7 @@
 //
 // This PoC exercises the FULL unpack ingress path (not create() directly).
 // Build: swift build --target PoCOCICrash  (swift-tools-version: 6.2)
+// Note: compiled with swiftLanguageMode(.v5) to avoid strict concurrency errors
 // ============================================================
 
 import Foundation
@@ -78,7 +79,9 @@ print("[*]       → UInt32(attribute.hash) → hash.getter → char.asciiValue!
 fflush(stdout)
 
 // THE CRASH — full OCI ingress path, not direct create() call
-let runTask = Task {
+// NB: WARNINGS_AS_ERRORS is set package-wide; swiftLanguageMode(.v5) in our target
+// keeps the non-Sendable capture of `formatter` as a warning, not an error.
+Task {
     do {
         try await formatter.unpack(
             source: tarPath,
@@ -93,4 +96,6 @@ let runTask = Task {
     }
 }
 
-RunLoop.main.run()
+// Park the main thread so the Task can run on the cooperative pool.
+// The crash (SIGTRAP/exit 133) fires before this returns.
+dispatchMain()
