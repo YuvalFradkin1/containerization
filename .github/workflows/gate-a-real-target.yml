@@ -10,11 +10,12 @@ on:
     branches: [poc-crash-test]
     paths-ignore:
       - 'crash-evidence/**'
+      - 'crash-evidence-real/**'
   workflow_dispatch:
 
 jobs:
   gate-a-real:
-    runs-on: macos-26-arm64
+    runs-on: macos-latest
     timeout-minutes: 25
     permissions:
       contents: write
