@@ -95,14 +95,17 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           set +e
-          # Locate binary via --show-bin-path (swift run --target invalid in Swift 6)
-          BIN_DIR=$(swift build --target PoCXattrCrash --show-bin-path 2>/dev/null)
-          POC_BIN="$BIN_DIR/PoCXattrCrash"
-          echo "[*] BIN_DIR: $BIN_DIR"
-          echo "[*] Binary path: $POC_BIN"
-          ls -la "$POC_BIN" 2>/dev/null || echo "[-] Binary not at expected path"
-          echo "$POC_BIN" > /tmp/poc_bin_path
-          "$POC_BIN" 2>&1
+          # SwiftPM always creates .build/debug/<name> as a symlink after a successful build.
+          # Prefer that; fall back to a recursive find for the real binary.
+          POC_BIN=".build/debug/PoCXattrCrash"
+          if [ ! -e "$POC_BIN" ]; then
+            echo "[*] symlink not found, searching with find..."
+            POC_BIN=$(find .build -name "PoCXattrCrash" -not -type d 2>/dev/null | head -1)
+          fi
+          echo "[*] Binary: $POC_BIN"
+          ls -la "$POC_BIN" 2>/dev/null || echo "[-] Binary still not found"
+          echo "$(pwd)/$POC_BIN" > /tmp/poc_bin_path
+          "$POC_BIN"
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
           echo "$EXIT" > /tmp/poc_exit_code
