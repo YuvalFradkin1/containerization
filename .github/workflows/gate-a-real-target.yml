@@ -91,25 +91,39 @@ jobs:
           .build/debug/PoCXattrCrash 2>&1
           EXIT=$?
           echo "[*] PoCXattrCrash exit code: $EXIT"
-          # non-zero expected (SIGTRAP = 5 or signal 6)
+          echo "$EXIT" > /tmp/poc_exit_code
+          # non-zero expected (SIGTRAP=5, SIGABRT=6, or 132/134 from signal)
           set -e
 
       - name: Wait for CrashReporter to write IPS
-        run: sleep 20
+        run: sleep 30
 
       - name: Collect IPS crash report
         run: |
-          echo "=== DiagnosticReports contents ==="
-          ls -lrt ~/Library/Logs/DiagnosticReports/ 2>/dev/null || echo "(empty or missing)"
+          POC_EXIT=$(cat /tmp/poc_exit_code 2>/dev/null || echo "?")
+          echo "[*] PoC exit code: $POC_EXIT"
+          echo ""
+          echo "=== All DiagnosticReport locations ==="
+          ls -lrt ~/Library/Logs/DiagnosticReports/ 2>/dev/null || echo "(user dir empty or missing)"
+          ls -lrt /Library/Logs/DiagnosticReports/ 2>/dev/null || echo "(system dir empty or missing)"
+          ls -lrt ~/Library/Logs/CrashReporter/ 2>/dev/null || echo "(CrashReporter dir missing)"
           echo ""
           PRE=$(cat /tmp/pre_run_ts)
-          # Find IPS files newer than our pre-run timestamp
-          find ~/Library/Logs/DiagnosticReports/ -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
-            MTIME=$(stat -f %m "$f")
-            if [ "$MTIME" -ge "$PRE" ]; then
-              echo "=== FOUND: $f ==="
-              cat "$f"
-            fi
+          echo "[*] Searching all report dirs for PoCXattrCrash*.ips newer than $PRE..."
+          for DIR in "$HOME/Library/Logs/DiagnosticReports" "/Library/Logs/DiagnosticReports" "$HOME/Library/Logs/CrashReporter"; do
+            find "$DIR" -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
+              MTIME=$(stat -f %m "$f")
+              if [ "$MTIME" -ge "$PRE" ]; then
+                echo "=== FOUND: $f ==="
+                cat "$f"
+              fi
+            done
+          done
+          echo ""
+          echo "=== Any crash log for PoCXattrCrash (all formats) ==="
+          find "$HOME/Library/Logs" /Library/Logs /tmp -name "*PoCXattrCrash*" 2>/dev/null | while read f; do
+            echo "FILE: $f"
+            cat "$f" 2>/dev/null | head -100
           done
 
       - name: Stage crash evidence
@@ -117,24 +131,27 @@ jobs:
           mkdir -p crash-evidence-real
           TS=$(date -u +%Y%m%dT%H%M%SZ)
           PRE=$(cat /tmp/pre_run_ts)
+          POC_EXIT=$(cat /tmp/poc_exit_code 2>/dev/null || echo "?")
 
-          # Copy any fresh IPS
-          IPS_FOUND=0
-          find ~/Library/Logs/DiagnosticReports/ -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
-            MTIME=$(stat -f %m "$f")
-            if [ "$MTIME" -ge "$PRE" ]; then
-              cp "$f" "crash-evidence-real/PoCXattrCrash-${TS}.ips"
-              IPS_FOUND=1
-              echo "[+] IPS staged: $f"
-            fi
+          # Copy any fresh IPS from all known locations
+          for DIR in "$HOME/Library/Logs/DiagnosticReports" "/Library/Logs/DiagnosticReports" "$HOME/Library/Logs/CrashReporter"; do
+            find "$DIR" -name "PoCXattrCrash*.ips" 2>/dev/null | while read f; do
+              MTIME=$(stat -f %m "$f")
+              if [ "$MTIME" -ge "$PRE" ]; then
+                cp "$f" "crash-evidence-real/PoCXattrCrash-${TS}.ips"
+                echo "[+] IPS staged from $f"
+              fi
+            done
           done
 
-          # Always capture stdout separately
+          # Always capture run metadata
           echo "Run: $TS | upstream HEAD: $(git -C /tmp/containerization rev-parse HEAD)" \
             > crash-evidence-real/run-${TS}.txt
           echo "macOS: $(sw_vers -productVersion) | arch: $(uname -m)" \
             >> crash-evidence-real/run-${TS}.txt
           echo "Swift: $(/usr/bin/swift --version 2>&1 | head -1)" \
+            >> crash-evidence-real/run-${TS}.txt
+          echo "PoC exit code: $POC_EXIT" \
             >> crash-evidence-real/run-${TS}.txt
           ls -la crash-evidence-real/
 
