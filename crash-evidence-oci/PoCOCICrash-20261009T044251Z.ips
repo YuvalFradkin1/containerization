@@ -1,0 +1,165 @@
+{"app_name":"PoCOCICrash","timestamp":"2026-10-09 04:42:29.00 +0000","app_version":"","slice_uuid":"db42e3e0-23ca-3398-b2b3-f88bc771affd","build_version":"","platform":1,"share_with_app_devs":0,"is_first_party":1,"bug_type":"309","os_version":"macOS 26.6.2 (25G83)","roots_installed":0,"incident_id":"C59487F8-38F9-4B0C-A14F-066EECC1068C","name":"PoCOCICrash"}
+{
+  "uptime" : 540,
+  "procRole" : "Unspecified",
+  "version" : 2,
+  "userID" : 501,
+  "deployVersion" : 210,
+  "modelCode" : "VirtualMac2,1",
+  "coalitionID" : 849,
+  "osVersion" : {
+    "train" : "macOS 26.6.2",
+    "build" : "25G83",
+    "releaseType" : "User"
+  },
+  "captureTime" : "2026-10-09 04:42:20.6071 +0000",
+  "codeSigningMonitor" : 0,
+  "incident" : "C59487F8-38F9-4B0C-A14F-066EECC1068C",
+  "pid" : 14172,
+  "translated" : false,
+  "cpuType" : "ARM-64",
+  "procLaunch" : "2026-10-09 04:42:00.9090 +0000",
+  "procStartAbsTime" : 12651316107,
+  "procExitAbsTime" : 13123688858,
+  "procName" : "PoCOCICrash",
+  "procPath" : "\/private\/tmp\/*\/PoCOCICrash",
+  "parentProc" : "Exited process",
+  "parentPid" : 14167,
+  "coalitionName" : "runner-provisioner",
+  "crashReporterKey" : "810540B9-1D81-FD47-4137-2AA032867287",
+  "appleIntelligenceStatus" : {"state":"unavailable","reasons":["deviceNotCapable"]},
+  "developerMode" : 1,
+  "responsiblePid" : 963,
+  "responsibleProc" : "hosted-compute-agent",
+  "codeSigningID" : "PoCOCICrash-55554944db42e3e023ca3398b2b3f88bc771affd",
+  "codeSigningTeamID" : "",
+  "codeSigningFlags" : 570425349,
+  "codeSigningValidationCategory" : 10,
+  "codeSigningTrustLevel" : 4294967295,
+  "codeSigningAuxiliaryInfo" : 0,
+  "instructionByteStream" : {"beforePC":"6AUAtej8YNMoAQC14AMFquEDBqrkAwuq5QMJquYDB6rnAwqqnlj\/lw==","atPC":"IAAg1CgAgFKJn4FS6BMAuekHAPlIAIBS6AMAOWAaAJAAEDWRYxoAkA=="},
+  "bootSessionUUID" : "B6A93954-E3D4-48D1-ACAD-D7790094369C",
+  "sip" : "disabled",
+  "exception" : {"codes":"0x0000000000000001, 0x0000000194b0d510","rawCodes":[1,6789584144],"type":"EXC_BREAKPOINT","signal":"SIGTRAP"},
+  "termination" : {"flags":0,"code":5,"namespace":"SIGNAL","indicator":"Trace\/BPT trap: 5","byProc":"exc handler","byPid":14172},
+  "os_fault" : {"process":"PoCOCICrash"},
+  "extMods" : {"caller":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"system":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"targeted":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"warnings":0},
+  "faultingThread" : 1,
+  "threads" : [{"id":43714,"frames":[{"imageOffset":34080,"symbol":"__semwait_signal_nocancel","symbolLocation":8,"imageIndex":1},{"imageOffset":160960,"symbol":"nanosleep$NOCANCEL","symbolLocation":208,"imageIndex":2},{"imageOffset":160660,"symbol":"sleep$NOCANCEL","symbolLocation":52,"imageIndex":2},{"imageOffset":85964,"symbol":"_dispatch_queue_cleanup2","symbolLocation":212,"imageIndex":3},{"imageOffset":18176,"symbol":"_pthread_tsd_cleanup","symbolLocation":620,"imageIndex":4},{"imageOffset":29492,"symbol":"_pthread_exit","symbolLocation":84,"imageIndex":4},{"imageOffset":17456,"symbol":"pthread_exit","symbolLocation":88,"imageIndex":4},{"imageOffset":68488,"symbol":"dispatch_main","symbolLocation":136,"imageIndex":3},{"imageOffset":8419852,"sourceLine":101,"sourceFile":"main.swift","symbol":"PoCOCICrash_main","imageIndex":0,"symbolLocation":4416},{"imageOffset":132324,"symbol":"start","symbolLocation":6992,"imageIndex":5}],"threadState":{"x":[{"value":4},{"value":0},{"value":1},{"value":1},{"value":1},{"value":0},{"value":52},{"value":0},{"value":8284422144,"symbolLocation":1600,"symbol":"usual"},{"value":16387},{"value":10},{"value":6166319912},{"value":2303},{"value":8284430752,"symbolLocation":0,"symbol":"vm_page_size"},{"value":4331045704},{"value":52525498368},{"value":423},{"value":8307717008},{"value":0},{"value":6166319824},{"value":6166319840},{"value":8284383840,"symbolLocation":2272,"symbol":"_main_thread"},{"value":8284471344,"symbolLocation":0,"symbol":"_pthread_keys"},{"value":8284382792,"symbolLocation":1224,"symbol":"_main_thread"},{"value":8284381872,"symbolLocation":304,"symbol":"_main_thread"},{"value":8284438528},{"value":10},{"value":0},{"value":0}],"flavor":"ARM_THREAD_STATE64","lr":{"value":6460343488},"cpsr":{"value":1610616832},"fp":{"value":6166319808},"sp":{"value":6166319760},"esr":{"value":1442840704,"description":"(Syscall)"},"pc":{"value":6461453600},"far":{"value":0}}},{"triggered":true,"id":43725,"threadState":{"x":[{"value":4332552192},{"value":3505},{"value":3505},{"value":13},{"value":4332673920},{"value":6166869968},{"value":101},{"value":0},{"value":6147},{"value":6147},{"value":4332673808},{"value":4332673456},{"value":5},{"value":5473},{"value":108},{"value":384},{"value":10570229804747817040},{"value":7601},{"value":0},{"value":6166870272},{"value":6166871280},{"value":0},{"value":6166874774},{"value":6166874773},{"value":6166874772},{"value":6166874771},{"value":6166874770},{"value":6166874769},{"value":6166874768}],"flavor":"ARM_THREAD_STATE64","lr":{"value":6789584144},"cpsr":{"value":1610616832},"fp":{"value":6166870240},"sp":{"value":6166870112},"esr":{"value":4060086273,"description":"(Breakpoint) brk 1"},"pc":{"value":6789584144,"matchesCrashFrame":1},"far":{"value":0}},"queue":"com.apple.root.utility-qos.cooperative","frames":[{"imageOffset":1451280,"symbol":"closure #1 in closure #1 in _assertionFailure(_:_:file:line:flags:)","symbolLocation":400,"imageIndex":7},{"imageOffset":1449956,"symbol":"_assertionFailure(_:_:file:line:flags:)","symbolLocation":276,"imageIndex":7},{"imageOffset":2511256,"sourceLine":60,"sourceFile":"EXT4+Xattrs.swift","symbol":"EXT4.ExtendedAttribute.hash.getter","imageIndex":0,"symbolLocation":564},{"imageOffset":2520352,"sourceLine":232,"sourceFile":"EXT4+Xattrs.swift","symbol":"static EXT4.FileXattrsState.write(buffer:attrs:start:delta:inline:)","imageIndex":0,"symbolLocation":2556},{"imageOffset":2523764,"sourceLine":188,"sourceFile":"EXT4+Xattrs.swift","symbol":"EXT4.FileXattrsState.writeBlockAttributes(buffer:)","imageIndex":0,"symbolLocation":1280},{"imageOffset":2306384,"sourceLine":482,"sourceFile":"EXT4+Formatter.swift","symbol":"EXT4.Formatter.create(path:link:mode:ts:buf:uid:gid:xattrs:recursion:fileBuffer:)","imageIndex":0,"symbolLocation":10692},{"imageOffset":2634504,"sourceLine":139,"sourceFile":"Formatter+Unpack.swift","symbol":"EXT4.Formatter.unpackEntries(reader:progress:)","imageIndex":0,"symbolLocation":5108},{"imageOffset":2706809,"sourceLine":59,"sourceFile":"Formatter+Unpack.swift","symbol":"EXT4.Formatter.unpack(source:format:compression:progress:)","imageIndex":0,"symbolLocation":1},{"imageOffset":8421181,"sourceLine":86,"sourceFile":"main.swift","symbol":"closure #1 in ","imageIndex":0,"symbolLocation":1},{"imageOffset":8422277,"sourceFile":"\/<compiler-generated>","symbol":"partial apply for closure #1 in ","symbolLocation":1,"imageIndex":0},{"imageOffset":4723213,"sourceFile":"\/<compiler-generated>","symbol":"thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A)","symbolLocation":1,"imageIndex":0},{"imageOffset":4723565,"sourceFile":"\/<compiler-generated>","symbol":"partial apply for thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A)","symbolLocation":1,"imageIndex":0},{"imageOffset":52933,"symbol":"completeTaskWithClosure(swift::AsyncContext*, swift::SwiftError*)","symbolLocation":1,"imageIndex":8}]},{"id":43726,"frames":[{"imageOffset":34136,"symbol":"__sigsuspend_nocancel","symbolLocation":8,"imageIndex":1},{"imageOffset":86216,"symbol":"_dispatch_sigsuspend","symbolLocation":48,"imageIndex":3},{"imageOffset":86168,"symbol":"_dispatch_sig_thread","symbolLocation":56,"imageIndex":3}],"threadState":{"x":[{"value":4},{"value":0},{"value":0},{"value":6167457728},{"value":6167457856},{"value":419432703},{"value":0},{"value":0},{"value":6167457728},{"value":6167457728},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":410},{"value":8307721512},{"value":0},{"value":6460132336,"symbolLocation":0,"symbol":"_dispatch_sigsuspend.mask"},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0},{"value":0}],"flavor":"ARM_THREAD_STATE64","lr":{"value":6459961544},"cpsr":{"value":536875008},"fp":{"value":6167457696},"sp":{"value":6167457680},"esr":{"value":1442840704,"description":"(Syscall)"},"pc":{"value":6461453656},"far":{"value":0}}}],
+  "usedImages" : [
+  {
+    "source" : "P",
+    "arch" : "arm64",
+    "base" : 4300554240,
+    "size" : 12517376,
+    "uuid" : "db42e3e0-23ca-3398-b2b3-f88bc771affd",
+    "path" : "\/private\/tmp\/*\/PoCOCICrash",
+    "name" : "PoCOCICrash"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6461419520,
+    "size" : 250600,
+    "uuid" : "c6a4a4cb-92e6-3baf-aae0-e8306259209a",
+    "path" : "\/usr\/lib\/system\/libsystem_kernel.dylib",
+    "name" : "libsystem_kernel.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6460182528,
+    "size" : 528872,
+    "uuid" : "d77ceb62-aff6-3cec-ba9b-4f057fbe2eb5",
+    "path" : "\/usr\/lib\/system\/libsystem_c.dylib",
+    "name" : "libsystem_c.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6459875328,
+    "size" : 291392,
+    "uuid" : "b2000cd5-f580-314a-a141-e036719d854e",
+    "path" : "\/usr\/lib\/system\/libdispatch.dylib",
+    "name" : "libdispatch.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6461673472,
+    "size" : 52028,
+    "uuid" : "a373f0b0-9880-326a-88b4-dd8be4e33072",
+    "path" : "\/usr\/lib\/system\/libsystem_pthread.dylib",
+    "name" : "libsystem_pthread.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6457589760,
+    "size" : 734464,
+    "uuid" : "74e52480-c2bd-3c8d-812d-95fe2b74a096",
+    "path" : "\/usr\/lib\/dyld",
+    "name" : "dyld"
+  },
+  {
+    "size" : 0,
+    "source" : "A",
+    "base" : 0,
+    "uuid" : "00000000-0000-0000-0000-000000000000"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 6788132864,
+    "size" : 5908480,
+    "uuid" : "83794fb3-de9b-3d23-ab5e-2c1d5d30f134",
+    "path" : "\/usr\/lib\/swift\/libswiftCore.dylib",
+    "name" : "libswiftCore.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "arm64e",
+    "base" : 10847956992,
+    "size" : 569494,
+    "uuid" : "8e168857-47f4-349f-a718-a18db144fcb0",
+    "path" : "\/usr\/lib\/swift\/libswift_Concurrency.dylib",
+    "name" : "libswift_Concurrency.dylib"
+  }
+],
+  "sharedCache" : {
+  "base" : 6456459264,
+  "size" : 6010847232,
+  "uuid" : "f2e86c53-6052-388b-ba71-5a0c9b569413"
+},
+  "vmSummary" : "ReadOnly portion of Libraries: Total=883.9M resident=0K(0%) swapped_out_or_unallocated=883.9M(100%)\nWritable regions: Total=98.6M written=321K(0%) resident=321K(0%) swapped_out=0K(0%) unallocated=98.3M(100%)\n\n                                VIRTUAL   REGION \nREGION TYPE                        SIZE    COUNT (non-coalesced) \n===========                     =======  ======= \nActivity Tracing                   256K        1 \nKernel Alloc Once                   32K        1 \nMALLOC                            24.7M       11 \nMALLOC guard page                 4080K        4 \nMemory Tag 22                     64.0M        1 \nSTACK GUARD                       56.0M        3 \nStack                             9264K        3 \n__AUTH                            1321K      149 \n__AUTH_CONST                      17.7M      340 \n__CTF                               824        1 \n__DATA                            4565K      297 \n__DATA_CONST                      16.6M      339 \n__DATA_DIRTY                      1320K      284 \n__FONT_DATA                        2352        1 \n__LINKEDIT                       583.4M        2 \n__OBJC_RO                         79.2M        1 \n__OBJC_RW                         2599K        1 \n__TEXT                           300.5M      351 \n__TPRO_CONST                       128K        2 \nmapped file                        160K        2 \npage table in kernel               321K        1 \nshared memory                       48K        2 \n===========                     =======  ======= \nTOTAL                              1.1G     1797 \n",
+  "legacyInfo" : {
+  "threadTriggered" : {
+    "queue" : "com.apple.root.utility-qos.cooperative"
+  }
+},
+  "logWritingSignature" : "ad8557d9c15ee2396efe490dcb0acd1375e3a2ac",
+  "roots_installed" : 0,
+  "bug_type" : "309",
+  "trmStatus" : 2105344,
+  "trialInfo" : {
+  "rollouts" : [
+    {
+      "rolloutId" : "67181b10c68c361a728c7cfa",
+      "factorPackIds" : [
+
+      ],
+      "deploymentId" : 240000005
+    },
+    {
+      "rolloutId" : "645eb1d0417dab722a215927",
+      "factorPackIds" : [
+
+      ],
+      "deploymentId" : 240000005
+    }
+  ],
+  "experiments" : [
+
+  ]
+}
+}
