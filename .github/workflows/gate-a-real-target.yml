@@ -85,7 +85,8 @@ jobs:
             echo "[-] Build FAILED with exit $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
-          echo "[*] Binary path: $(find .build -name PoCXattrCrash -type f 2>/dev/null)"
+          echo "[*] Binary (file/symlink): $(find .build -name PoCXattrCrash -not -type d 2>/dev/null)"
+          ls -la .build/debug/PoCXattrCrash 2>/dev/null || echo "no symlink at .build/debug/"
 
       - name: Record pre-run timestamp for IPS detection
         run: date -u +%s > /tmp/pre_run_ts && date -u
@@ -94,7 +95,7 @@ jobs:
         working-directory: /tmp/containerization
         run: |
           echo "[*] Locating PoCXattrCrash binary..."
-          BIN=$(find /tmp/containerization/.build -name "PoCXattrCrash" -type f 2>/dev/null | head -1)
+          BIN=$(find /tmp/containerization/.build -name "PoCXattrCrash" -not -type d 2>/dev/null | head -1)
           echo "[*] Binary found at: $BIN"
           echo "$BIN" > /tmp/poc_bin_path
           if [ -z "$BIN" ]; then
