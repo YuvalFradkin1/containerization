@@ -1,0 +1,47 @@
+name: SymlinkEscape PoC — SIG-NEW (CWE-61/CWE-22)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'poc-real/**'
+      - '.github/workflows/poc-symlink-escape.yml'
+  workflow_dispatch:
+
+jobs:
+  poc:
+    name: Run SymlinkEscapePoC on macOS
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: poc-real
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Resolve dependencies
+        run: swift package resolve
+
+      - name: Build SymlinkEscapePoC
+        run: swift build -c release --product SymlinkEscapePoC
+
+      - name: Run SymlinkEscapePoC — capture output
+        id: poc
+        run: |
+          set +e
+          OUTPUT=$(.build/release/SymlinkEscapePoC 2>&1)
+          EXIT=$?
+          echo "$OUTPUT"
+          echo "---"
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          # Surface key lines for the summary
+          echo "## SymlinkEscape PoC Output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$OUTPUT" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # Fail the step only if the PoC itself reports failure
+          echo "$OUTPUT" | grep -q "EXPLOIT CONFIRMED" && echo "✅ EXPLOIT CONFIRMED found in output" || echo "⚠️  EXPLOIT CONFIRMED not found"

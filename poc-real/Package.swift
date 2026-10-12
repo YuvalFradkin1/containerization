@@ -85,5 +85,16 @@ let package = Package(
             ],
             path: "Sources/RealArchiveFatalPoC"
         ),
+
+        // SIG-NEW: Container → Host Symlink Exfiltration via ArchiveWriter.archiveDirectory
+        // CWE-61 / CWE-22 — FilePath.appending(String) concatenates absolute targets
+        // instead of replacing the base, bypassing the containment guard.
+        .executableTarget(
+            name: "SymlinkEscapePoC",
+            dependencies: [
+                "VendoredContainerizationArchive",
+            ],
+            path: "Sources/SymlinkEscapePoC"
+        ),
     ]
 )
