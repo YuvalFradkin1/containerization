@@ -26,43 +26,55 @@ jobs:
       - name: Install libarchive (required by CArchive)
         run: brew install libarchive xz bzip2
 
-      - name: Symlink Homebrew libs into /usr/local/lib (ld default search path)
+      - name: Link Homebrew libs into default ld search paths
         run: |
-          LIBARCHIVE_LIB=$(brew --prefix libarchive)/lib
-          XZ_LIB=$(brew --prefix xz)/lib
-          BZ2_LIB=$(brew --prefix bzip2)/lib
-          sudo mkdir -p /usr/local/lib
-          # Create symlinks for every dylib/a in each prefix so ld can find them
-          for lib in "$LIBARCHIVE_LIB"/libarchive.*; do
-            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          sudo mkdir -p /usr/local/lib /usr/local/include
+          LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
+          XZ_PREFIX=$(brew --prefix xz)
+          BZ2_PREFIX=$(brew --prefix bzip2)
+          echo "=== libarchive prefix: $LIBARCHIVE_PREFIX ==="
+          ls "$LIBARCHIVE_PREFIX/lib/" | head -20
+          echo "=== xz prefix: $XZ_PREFIX ==="
+          ls "$XZ_PREFIX/lib/" | grep -E 'lzma|xz' | head -10
+          echo "=== bz2 prefix: $BZ2_PREFIX ==="
+          ls "$BZ2_PREFIX/lib/" | grep -E 'bz2' | head -10
+          # Symlink each library file into /usr/local/lib
+          for f in "$LIBARCHIVE_PREFIX/lib"/libarchive*; do
+            sudo ln -sf "$f" /usr/local/lib/ 2>/dev/null || true; echo "  -> $f"
           done
-          for lib in "$XZ_LIB"/liblzma.*; do
-            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          for f in "$XZ_PREFIX/lib"/liblzma* "$XZ_PREFIX/lib"/libxz*; do
+            sudo ln -sf "$f" /usr/local/lib/ 2>/dev/null || true; echo "  -> $f"
           done
-          for lib in "$BZ2_LIB"/libbz2.*; do
-            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          for f in "$BZ2_PREFIX/lib"/libbz2*; do
+            sudo ln -sf "$f" /usr/local/lib/ 2>/dev/null || true; echo "  -> $f"
           done
-          echo "=== /usr/local/lib after symlinking ==="
-          ls /usr/local/lib/ | grep -E "archive|lzma|bz2" || echo "(nothing)"
+          echo "=== /usr/local/lib after linking ==="
+          ls /usr/local/lib/ | grep -E "archive|lzma|bz2|xz" || echo "(nothing matched)"
+          # Also symlink headers so CArchive can include libarchive headers
+          for f in "$LIBARCHIVE_PREFIX/include"/archive*; do
+            sudo ln -sf "$f" /usr/local/include/ 2>/dev/null || true
+          done
 
       - name: Resolve dependencies
         run: swift package resolve
 
-      - name: Build SymlinkEscapePoC
+      - name: Build SymlinkEscapePoC (full output to summary)
         run: |
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
+          set +e
           swift build -c release --product SymlinkEscapePoC \
             -Xcc -I${LIBARCHIVE_PREFIX}/include \
-            2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
+            2>&1 | tee /tmp/build.log
+          BUILD_EXIT=${PIPESTATUS[0]}
+          echo "## Build exit code: $BUILD_EXIT" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # Write the last 150 lines (most likely to contain the error)
+          tail -150 /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
           if [ $BUILD_EXIT -ne 0 ]; then
-            # Emit error lines as GitHub annotations
-            grep -E "error:" /tmp/build.log | while IFS= read -r line; do
+            grep "error:" /tmp/build.log | while IFS= read -r line; do
               echo "::error::$line"
             done
-            echo "## Swift build errors" >> "$GITHUB_STEP_SUMMARY"
-            printf '```\n' >> "$GITHUB_STEP_SUMMARY"
-            grep -A 3 "error:" /tmp/build.log >> "$GITHUB_STEP_SUMMARY" || cat /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
-            printf '```\n' >> "$GITHUB_STEP_SUMMARY"
           fi
           exit $BUILD_EXIT
 
@@ -75,10 +87,8 @@ jobs:
           echo "$OUTPUT"
           echo "---"
           echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
-          # Surface key lines for the summary
           echo "## SymlinkEscape PoC Output" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "$OUTPUT" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          # Fail the step only if the PoC itself reports failure
           echo "$OUTPUT" | grep -q "EXPLOIT CONFIRMED" && echo "✅ EXPLOIT CONFIRMED found in output" || echo "⚠️  EXPLOIT CONFIRMED not found"
