@@ -30,12 +30,16 @@ jobs:
         run: swift package resolve
 
       - name: Build SymlinkEscapePoC
-        env:
-          LIBRARY_PATH: /opt/homebrew/lib
-          C_INCLUDE_PATH: /opt/homebrew/include
-          CPATH: /opt/homebrew/include
         run: |
-          swift build -c release --product SymlinkEscapePoC 2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
+          LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
+          XZ_PREFIX=$(brew --prefix xz)
+          BZ2_PREFIX=$(brew --prefix bzip2)
+          swift build -c release --product SymlinkEscapePoC \
+            -Xlinker -L${LIBARCHIVE_PREFIX}/lib \
+            -Xlinker -L${XZ_PREFIX}/lib \
+            -Xlinker -L${BZ2_PREFIX}/lib \
+            -Xcc -I${LIBARCHIVE_PREFIX}/include \
+            2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
           if [ $BUILD_EXIT -ne 0 ]; then
             # Emit each error line as a GitHub annotation so it appears in the PR/run UI
             grep -E "error:|warning:" /tmp/build.log | while IFS= read -r line; do
