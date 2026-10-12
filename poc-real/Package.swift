@@ -33,6 +33,10 @@ let package = Package(
             path: "Sources/VendoredContainerizationArchive/CArchive",
             sources: ["archive_swift_bridge.c"],
             publicHeadersPath: "include",
+            cSettings: [
+                // archive_swift_bridge.c includes <zstd.h> — give the C compiler the brew header path
+                .unsafeFlags(["-I/opt/homebrew/include"], .when(platforms: [.macOS])),
+            ],
             linkerSettings: [
                 .linkedLibrary("archive"),
                 .linkedLibrary("lzma"),
