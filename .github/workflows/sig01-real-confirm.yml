@@ -28,8 +28,13 @@ jobs:
         run: |
           swift build -c release 2>&1
           ls -la .build/release/MakeMalformedTar .build/release/RealArchiveFatalPoC
-          echo "--- otool: verify ContainerizationArchive linked ---"
-          otool -L .build/release/RealArchiveFatalPoC 2>/dev/null | grep -i arch || echo "(no explicit libarchive link — linked via ContainerizationArchive)"
+          echo "--- otool: verify libarchive linked ---"
+          otool -L .build/release/RealArchiveFatalPoC 2>/dev/null | grep -i arch || echo "(libarchive linked indirectly)"
+          echo "--- Verify vendored sources are the real code ---"
+          echo "ArchiveReader.swift SHA256:"
+          shasum -a 256 Sources/VendoredContainerizationArchive/ArchiveReader.swift
+          echo "Upstream ArchiveReader.swift SHA256:"
+          shasum -a 256 ../Sources/ContainerizationArchive/ArchiveReader.swift
 
       - name: Generate malformed OCI layer (corrupt ustar checksum)
         working-directory: poc-real

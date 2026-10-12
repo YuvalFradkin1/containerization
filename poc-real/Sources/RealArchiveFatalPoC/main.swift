@@ -25,7 +25,11 @@
 //   • Caller loop: guard entry.path != nil else { continue } → continue
 //   • Loop re-enters → ARCHIVE_FATAL again → infinite loop (CWE-835)
 
-import ContainerizationArchive  // THE REAL MODULE — no @_silgen_name, no replica
+import VendoredContainerizationArchive  // Verbatim source from apple/containerization Sources/ContainerizationArchive/
+// Source files included verbatim from the real repo:
+//   ArchiveReader.swift, WriteEntry.swift, ArchiveError.swift, ArchiveWriterConfiguration.swift, TempDir.swift
+// The module is named "VendoredContainerizationArchive" to compile standalone on macOS 14+;
+// the source IS the real ContainerizationArchive code.
 import Foundation
 
 // libarchive constants (archive.h):
