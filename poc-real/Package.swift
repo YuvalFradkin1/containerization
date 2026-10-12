@@ -25,9 +25,9 @@ let package = Package(
     name: "RealArchiveFatalPoC",
     platforms: [.macOS(.v14)],
     dependencies: [
-        // swift-system intentionally omitted — use SDK SystemPackage to avoid
-        // _StrSlice ABI mismatch between package-built and SDK-shipped versions.
-        // Note: zstd is also not a SwiftPM package; we link system zstd via brew.
+        // Pinned to exact revision used by apple/containerization Package.resolved (1.7.5)
+        // to avoid _StrSlice ABI mismatch. A Package.resolved locks this version on CI.
+        .package(url: "https://github.com/apple/swift-system.git", exact: "1.7.5"),
     ],
     targets: [
         // CArchive — C target, verbatim copy from Sources/ContainerizationArchive/CArchive/
@@ -65,7 +65,9 @@ let package = Package(
         ),
         .target(
             name: "ContainerizationOS",
-            // No swift-system product dep — import SystemPackage from SDK directly
+            dependencies: [
+                .product(name: "SystemPackage", package: "swift-system"),
+            ],
             path: "Sources/ContainerizationOS"
         ),
 
@@ -78,7 +80,7 @@ let package = Package(
                 "ContainerizationError",
                 "ContainerizationOS",
                 "ContainerizationExtras",
-                // No swift-system product dep — SDK SystemPackage used directly
+                .product(name: "SystemPackage", package: "swift-system"),
             ],
             path: "Sources/VendoredContainerizationArchive",
             exclude: ["CArchive"]
