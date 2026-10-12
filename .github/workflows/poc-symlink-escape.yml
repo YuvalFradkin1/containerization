@@ -50,8 +50,8 @@ jobs:
             -Xlinker -L/opt/homebrew/lib \
             2>&1 | tee /tmp/build.log
           BUILD_EXIT=${PIPESTATUS[0]}
-          # Annotate every error line
-          grep -E "^.*error:" /tmp/build.log | while IFS= read -r line; do
+          # Annotate error lines — broader grep to catch ld "not found" messages
+          grep -E "error:|ld: |not found|undefined symbol|library " /tmp/build.log | while IFS= read -r line; do
             echo "::error::$line"
           done
           # Write tail of build log to summary
