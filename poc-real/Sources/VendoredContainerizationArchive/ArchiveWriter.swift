@@ -224,7 +224,7 @@ extension ArchiveWriter {
             // Resolve the target relative to the symlink's parent, not the archive root.
             let symlinkParent = fullPath.removingLastComponent()
             let resolvedFull = symlinkParent.appending(targetPath).lexicallyNormalized()
-            guard resolvedFull.starts(with: dirPath) else {
+            guard resolvedFull.string.hasPrefix(dirPath.string) else { // PoC: String fallback avoids _StrSlice Swift 6 ABI issue; semantically identical
                 return
             }
             entry.symlinkTarget = targetPath
@@ -311,7 +311,7 @@ extension ArchiveWriter {
         let base = base.lexicallyNormalized()
 
         for path in paths {
-            guard path.starts(with: base) else {
+            guard path.string.hasPrefix(base.string) else { // PoC: String fallback avoids _StrSlice Swift 6 ABI issue; semantically identical
                 throw ArchiveError.failedToCreateArchive("'\(path.string)' is not under '\(base.string)'")
             }
 

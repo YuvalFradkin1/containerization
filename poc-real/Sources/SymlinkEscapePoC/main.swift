@@ -87,7 +87,7 @@ let symParent   = FilePath(containerRootfs.path)
 let rawTarget   = poisonTarget  // "/etc/passwd"
 
 let resolvedFull = symParent.appending(rawTarget).lexicallyNormalized()
-let passesCheck  = resolvedFull.starts(with: dirPath)
+let passesCheck  = resolvedFull.string.hasPrefix(dirPath.string) // avoids _StrSlice Swift 6 ABI issue; semantically identical
 
 print("containerRootfs              : \(dirPath)")
 print("symParent.appending(target)  : \(symParent.appending(rawTarget))")
