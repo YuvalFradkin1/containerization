@@ -68,7 +68,10 @@ let package = Package(
             dependencies: [
                 .product(name: "SystemPackage", package: "swift-system"),
             ],
-            path: "Sources/ContainerizationOS"
+            path: "Sources/ContainerizationOS",
+            // -Onone prevents the Swift 6 compiler from emitting external references
+            // to @_alwaysEmitIntoClient symbols like _StrSlice.== from swift-system 1.7.5
+            swiftSettings: [.unsafeFlags(["-Onone"])]
         ),
 
         // Vendored ContainerizationArchive — VERBATIM copy of real source files
@@ -83,7 +86,10 @@ let package = Package(
                 .product(name: "SystemPackage", package: "swift-system"),
             ],
             path: "Sources/VendoredContainerizationArchive",
-            exclude: ["CArchive"]
+            exclude: ["CArchive"],
+            // -Onone prevents the Swift 6 compiler from emitting external references
+            // to @_alwaysEmitIntoClient symbols like _StrSlice.== from swift-system 1.7.5
+            swiftSettings: [.unsafeFlags(["-Onone"])]
         ),
 
         // Malformed tar generator (standalone, no archive dependency)
@@ -109,7 +115,8 @@ let package = Package(
             dependencies: [
                 "VendoredContainerizationArchive",
             ],
-            path: "Sources/SymlinkEscapePoC"
+            path: "Sources/SymlinkEscapePoC",
+            swiftSettings: [.unsafeFlags(["-Onone"])]
         ),
     ]
 )
