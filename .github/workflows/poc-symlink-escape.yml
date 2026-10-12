@@ -30,6 +30,10 @@ jobs:
         run: swift package resolve
 
       - name: Build SymlinkEscapePoC
+        env:
+          LIBRARY_PATH: /opt/homebrew/lib
+          C_INCLUDE_PATH: /opt/homebrew/include
+          CPATH: /opt/homebrew/include
         run: |
           swift build -c release --product SymlinkEscapePoC 2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
           if [ $BUILD_EXIT -ne 0 ]; then
