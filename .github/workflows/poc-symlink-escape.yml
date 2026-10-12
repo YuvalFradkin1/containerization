@@ -23,16 +23,16 @@ jobs:
       - name: Swift version
         run: swift --version
 
-      - name: Install and link libarchive, xz, bzip2
+      - name: Install and link all required C libraries
         run: |
-          brew install libarchive xz bzip2
+          brew install libarchive xz bzip2 zstd
           # Force-link keg-only formulae so dylibs appear in /opt/homebrew/lib
-          brew link --force libarchive xz bzip2
-          echo "=== /opt/homebrew/lib after brew link ==="
-          ls /opt/homebrew/lib/ | grep -E "archive|lzma|bz2" || echo "(nothing)"
-          echo "=== brew --prefix libarchive ==="
-          brew --prefix libarchive
-          ls "$(brew --prefix libarchive)/lib/" | grep archive
+          brew link --force libarchive bzip2 || true
+          # xz and zstd are usually already linked
+          echo "=== /opt/homebrew/lib: archive, lzma, bz2, zstd ==="
+          ls /opt/homebrew/lib/ | grep -E "archive|lzma|bz2|zstd" || echo "(nothing)"
+          echo "=== brew prefix libarchive ===" && brew --prefix libarchive
+          echo "=== brew prefix zstd ===" && brew --prefix zstd
 
       - name: Resolve dependencies
         run: swift package resolve
@@ -40,21 +40,22 @@ jobs:
       - name: Build SymlinkEscapePoC
         run: |
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
-          # Capture full output; emit errors as annotations; always show tail in summary
+          ZSTD_PREFIX=$(brew --prefix zstd)
           set +e
           swift build -c release --product SymlinkEscapePoC \
             -Xcc -I${LIBARCHIVE_PREFIX}/include \
+            -Xcc -I${ZSTD_PREFIX}/include \
             -Xlinker -L${LIBARCHIVE_PREFIX}/lib \
             -Xlinker -L$(brew --prefix xz)/lib \
             -Xlinker -L$(brew --prefix bzip2)/lib \
+            -Xlinker -L${ZSTD_PREFIX}/lib \
             -Xlinker -L/opt/homebrew/lib \
             2>&1 | tee /tmp/build.log
           BUILD_EXIT=${PIPESTATUS[0]}
-          # Annotate error lines — broader grep to catch ld "not found" messages
-          grep -E "error:|ld: |not found|undefined symbol|library " /tmp/build.log | while IFS= read -r line; do
+          # Annotate ALL diagnostic lines for visibility
+          grep -E "Undefined symbols|referenced from|error:|ld: |not found|undefined symbol" /tmp/build.log | head -50 | while IFS= read -r line; do
             echo "::error::$line"
           done
-          # Write tail of build log to summary
           echo "## Build log (last 200 lines)" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           tail -200 /tmp/build.log >> "$GITHUB_STEP_SUMMARY"

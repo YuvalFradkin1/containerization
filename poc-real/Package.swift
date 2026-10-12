@@ -17,17 +17,19 @@ let package = Package(
     platforms: [.macOS(.v14)],
     dependencies: [
         .package(url: "https://github.com/apple/swift-system.git", from: "1.0.0"),
-        .package(url: "https://github.com/facebook/zstd.git", exact: "1.5.7"),
+        // Note: zstd is NOT listed as a SwiftPM package dependency because
+        // facebook/zstd does not reliably expose its compiled symbols for linking
+        // on macOS CI. Instead, we link against system zstd via .linkedLibrary("zstd")
+        // in CArchive's linkerSettings, with the Homebrew dylib path added via
+        // unsafeFlags. The CI workflow installs zstd via brew and force-links it.
     ],
     targets: [
         // CArchive — C target, verbatim copy from Sources/ContainerizationArchive/CArchive/
         // Contains archive_swift_bridge.c and the libarchive headers.
-        // Links system libarchive + lzma + bz2 + z.
+        // Links system libarchive + lzma + bz2 + z + zstd (all from Homebrew on macOS CI).
         .target(
             name: "CArchive",
-            dependencies: [
-                .product(name: "libzstd", package: "zstd"),
-            ],
+            dependencies: [],
             path: "Sources/VendoredContainerizationArchive/CArchive",
             sources: ["archive_swift_bridge.c"],
             publicHeadersPath: "include",
@@ -36,6 +38,7 @@ let package = Package(
                 .linkedLibrary("lzma"),
                 .linkedLibrary("bz2"),
                 .linkedLibrary("z"),
+                .linkedLibrary("zstd"),
                 // Homebrew on Apple Silicon installs to /opt/homebrew (not in default SDK search path)
                 .unsafeFlags(["-L/opt/homebrew/lib"], .when(platforms: [.macOS])),
             ]
