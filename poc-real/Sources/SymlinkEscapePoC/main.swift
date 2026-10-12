@@ -142,7 +142,7 @@ var foundMaliciousSymlink = false
 for (entry, _) in reader.makeStreamingIterator() {
     guard let path = entry.path else { continue }
     let symTarget = entry.symlinkTarget ?? "(none)"
-    print("  entry: \(path)  type=\(entry.fileType.debugDescription)  symlinkTarget=\(symTarget)")
+    print("  entry: \(path)  type=\(entry.fileType.rawValue)  symlinkTarget=\(symTarget)")
     if let t = entry.symlinkTarget, t == poisonTarget {
         foundMaliciousSymlink = true
         print("  ^^^ MALICIOUS: absolute host path \"\(t)\" survived containment check!")
