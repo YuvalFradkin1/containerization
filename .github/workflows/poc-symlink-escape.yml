@@ -27,7 +27,17 @@ jobs:
         run: swift package resolve
 
       - name: Build SymlinkEscapePoC
-        run: swift build -c release --product SymlinkEscapePoC
+        run: |
+          set -o pipefail
+          swift build -c release --product SymlinkEscapePoC 2>&1 | tee /tmp/build.log
+          STATUS=${PIPESTATUS[0]}
+          if [ $STATUS -ne 0 ]; then
+            echo "## Build Failure" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            exit $STATUS
+          fi
 
       - name: Run SymlinkEscapePoC — capture output
         id: poc
