@@ -16,7 +16,7 @@ let package = Package(
     name: "RealArchiveFatalPoC",
     platforms: [.macOS(.v14)],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-system.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-system.git", from: "1.6.4"),
         // Note: zstd is NOT listed as a SwiftPM package dependency because
         // facebook/zstd does not reliably expose its compiled symbols for linking
         // on macOS CI. Instead, we link against system zstd via .linkedLibrary("zstd")
