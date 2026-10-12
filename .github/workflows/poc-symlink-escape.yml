@@ -29,6 +29,13 @@ jobs:
       - name: Resolve dependencies
         run: swift package resolve
 
+      - name: Diagnose linker environment
+        run: |
+          echo "=== brew prefix libarchive ===" && brew --prefix libarchive
+          echo "=== libarchive libs ===" && ls $(brew --prefix libarchive)/lib/ | grep archive || true
+          echo "=== which clang ===" && which clang && clang --version
+          echo "=== xcrun --show-sdk-path ===" && xcrun --show-sdk-path
+
       - name: Build SymlinkEscapePoC
         run: |
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
@@ -39,7 +46,7 @@ jobs:
             -Xlinker -L${XZ_PREFIX}/lib \
             -Xlinker -L${BZ2_PREFIX}/lib \
             -Xcc -I${LIBARCHIVE_PREFIX}/include \
-            2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
+            -v 2>&1 | grep -E "error:|warning:|ld |clang" | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
           if [ $BUILD_EXIT -ne 0 ]; then
             # Emit each error line as a GitHub annotation so it appears in the PR/run UI
             grep -E "error:|warning:" /tmp/build.log | while IFS= read -r line; do
