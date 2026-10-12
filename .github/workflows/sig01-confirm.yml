@@ -21,11 +21,13 @@ jobs:
           pkgutil --pkg-info com.apple.pkg.CLTools_SDK_macOS 2>/dev/null | grep version || true
 
       - name: Build PoC binaries
+        working-directory: poc
         run: |
           swift build -c release 2>&1
           ls -la .build/release/MakeMalformedTar .build/release/ArchiveFatalPoC
 
       - name: Generate malformed OCI layer (crafted tar with corrupt checksum)
+        working-directory: poc
         run: |
           .build/release/MakeMalformedTar /tmp/malformed_layer.tar
           echo "File size: $(wc -c < /tmp/malformed_layer.tar) bytes"
@@ -41,6 +43,7 @@ jobs:
           echo "Control archive size: $(wc -c < /tmp/control_valid.tar) bytes"
 
       - name: CONTROL RUN — valid tar must exit 0 without hang
+        working-directory: poc
         run: |
           echo "=== Control run (valid tar) ==="
           timeout 15s .build/release/ArchiveFatalPoC /tmp/control_valid.tar
@@ -49,6 +52,7 @@ jobs:
 
       - name: EXPLOIT RUN — malformed tar (hang = bug confirmed, timeout = bug confirmed)
         id: exploit_run
+        working-directory: poc
         run: |
           echo "=== Exploit run (malformed tar — ARCHIVE_FATAL trigger) ==="
           echo "If this step times out (job timeout-minutes exceeded) → infinite loop confirmed."
@@ -69,6 +73,7 @@ jobs:
           fi
 
       - name: Reproducibility run (second exploit run)
+        working-directory: poc
         run: |
           echo "=== Reproducibility run ==="
           timeout 30s .build/release/ArchiveFatalPoC /tmp/malformed_layer.tar
