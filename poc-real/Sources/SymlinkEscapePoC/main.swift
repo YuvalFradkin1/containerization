@@ -35,6 +35,11 @@
 import VendoredContainerizationArchive
 import Foundation
 import SystemPackage
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#endif
 
 // ─── 1. Build a fake "container rootfs" with a malicious absolute symlink ────
 
@@ -63,7 +68,7 @@ try! "hello from container".write(to: legitFile, atomically: true, encoding: .ut
 // Plant the malicious symlink: evil -> /etc/passwd (absolute HOST path)
 let evilLink = containerRootfs.appendingPathComponent("evil")
 let poisonTarget = "/etc/passwd"   // absolute path on the HOST
-guard Foundation.symlink(poisonTarget, evilLink.path) == 0 else {
+guard symlink(poisonTarget, evilLink.path) == 0 else {
     print("FAIL: symlink creation: \(errno)"); exit(1)
 }
 
