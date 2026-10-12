@@ -36,6 +36,8 @@ let package = Package(
                 .linkedLibrary("lzma"),
                 .linkedLibrary("bz2"),
                 .linkedLibrary("z"),
+                // Homebrew on Apple Silicon installs to /opt/homebrew (not in default SDK search path)
+                .unsafeFlags(["-L/opt/homebrew/lib"], .when(platforms: [.macOS])),
             ]
         ),
 
