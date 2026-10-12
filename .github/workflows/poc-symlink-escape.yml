@@ -23,6 +23,9 @@ jobs:
       - name: Swift version
         run: swift --version
 
+      - name: Install libarchive (required by CArchive)
+        run: brew install libarchive xz bzip2
+
       - name: Resolve dependencies
         run: swift package resolve
 
