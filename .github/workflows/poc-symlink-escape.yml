@@ -26,33 +26,39 @@ jobs:
       - name: Install libarchive (required by CArchive)
         run: brew install libarchive xz bzip2
 
+      - name: Symlink Homebrew libs into /usr/local/lib (ld default search path)
+        run: |
+          LIBARCHIVE_LIB=$(brew --prefix libarchive)/lib
+          XZ_LIB=$(brew --prefix xz)/lib
+          BZ2_LIB=$(brew --prefix bzip2)/lib
+          sudo mkdir -p /usr/local/lib
+          # Create symlinks for every dylib/a in each prefix so ld can find them
+          for lib in "$LIBARCHIVE_LIB"/libarchive.*; do
+            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          done
+          for lib in "$XZ_LIB"/liblzma.*; do
+            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          done
+          for lib in "$BZ2_LIB"/libbz2.*; do
+            sudo ln -sf "$lib" /usr/local/lib/$(basename "$lib") 2>/dev/null || true
+          done
+          echo "=== /usr/local/lib after symlinking ==="
+          ls /usr/local/lib/ | grep -E "archive|lzma|bz2" || echo "(nothing)"
+
       - name: Resolve dependencies
         run: swift package resolve
-
-      - name: Diagnose linker environment
-        run: |
-          echo "=== brew prefix libarchive ===" && brew --prefix libarchive
-          echo "=== libarchive libs ===" && ls $(brew --prefix libarchive)/lib/ | grep archive || true
-          echo "=== which clang ===" && which clang && clang --version
-          echo "=== xcrun --show-sdk-path ===" && xcrun --show-sdk-path
 
       - name: Build SymlinkEscapePoC
         run: |
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
-          XZ_PREFIX=$(brew --prefix xz)
-          BZ2_PREFIX=$(brew --prefix bzip2)
           swift build -c release --product SymlinkEscapePoC \
-            -Xlinker -L${LIBARCHIVE_PREFIX}/lib \
-            -Xlinker -L${XZ_PREFIX}/lib \
-            -Xlinker -L${BZ2_PREFIX}/lib \
             -Xcc -I${LIBARCHIVE_PREFIX}/include \
-            -v 2>&1 | grep -E "error:|warning:|ld |clang" | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
+            2>&1 | tee /tmp/build.log; BUILD_EXIT=${PIPESTATUS[0]}
           if [ $BUILD_EXIT -ne 0 ]; then
-            # Emit each error line as a GitHub annotation so it appears in the PR/run UI
-            grep -E "error:|warning:" /tmp/build.log | while IFS= read -r line; do
+            # Emit error lines as GitHub annotations
+            grep -E "error:" /tmp/build.log | while IFS= read -r line; do
               echo "::error::$line"
             done
-            # Also write all errors to the step summary
             echo "## Swift build errors" >> "$GITHUB_STEP_SUMMARY"
             printf '```\n' >> "$GITHUB_STEP_SUMMARY"
             grep -A 3 "error:" /tmp/build.log >> "$GITHUB_STEP_SUMMARY" || cat /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
