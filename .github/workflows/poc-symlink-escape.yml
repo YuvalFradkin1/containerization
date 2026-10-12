@@ -42,7 +42,12 @@ jobs:
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
           ZSTD_PREFIX=$(brew --prefix zstd)
           set +e
-          swift build -c release --product SymlinkEscapePoC \
+          # Build in debug mode to avoid -c release overriding -Onone swiftSettings.
+          # The _StrSlice.== symbol from swift-system is @_alwaysEmitIntoClient;
+          # it must be emitted into every client object file. With -c release the
+          # Swift 6 compiler on arm64 generates a spurious external reference instead.
+          # Debug mode reliably triggers the correct @_alwaysEmitIntoClient emission.
+          swift build --product SymlinkEscapePoC \
             -Xcc -I${LIBARCHIVE_PREFIX}/include \
             -Xcc -I${ZSTD_PREFIX}/include \
             -Xlinker -L${LIBARCHIVE_PREFIX}/lib \
@@ -66,7 +71,7 @@ jobs:
         id: poc
         run: |
           set +e
-          OUTPUT=$(.build/release/SymlinkEscapePoC 2>&1)
+          OUTPUT=$(.build/debug/SymlinkEscapePoC 2>&1)
           EXIT=$?
           echo "$OUTPUT"
           echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
