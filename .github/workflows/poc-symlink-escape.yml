@@ -20,6 +20,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Runner info (for evidence)
+        run: |
+          echo "## Runner Info" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Runner OS: $RUNNER_OS" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Runner Arch: $RUNNER_ARCH" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit SHA: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Ref: $GITHUB_REF" >> "$GITHUB_STEP_SUMMARY"
+          sw_vers
+          uname -m
+
       - name: Swift version
         run: swift --version
 
@@ -41,7 +51,6 @@ jobs:
         run: |
           LIBARCHIVE_PREFIX=$(brew --prefix libarchive)
           ZSTD_PREFIX=$(brew --prefix zstd)
-          set +e
           # Build in debug mode to avoid -c release overriding -Onone swiftSettings.
           # The _StrSlice.== symbol from swift-system is @_alwaysEmitIntoClient;
           # it must be emitted into every client object file. With -c release the
@@ -56,27 +65,65 @@ jobs:
             -Xlinker -L${ZSTD_PREFIX}/lib \
             -Xlinker -L/opt/homebrew/lib \
             2>&1 | tee /tmp/build.log
-          BUILD_EXIT=${PIPESTATUS[0]}
-          # Annotate ALL diagnostic lines for visibility
-          grep -E "Undefined symbols|referenced from|error:|ld: |not found|undefined symbol" /tmp/build.log | head -50 | while IFS= read -r line; do
-            echo "::error::$line"
-          done
+          # Fail the step if build failed
           echo "## Build log (last 200 lines)" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           tail -200 /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          exit $BUILD_EXIT
 
-      - name: Run SymlinkEscapePoC — capture output
-        id: poc
+      - name: Run SymlinkEscapePoC — verify all stages pass
         run: |
           set +e
           OUTPUT=$(.build/debug/SymlinkEscapePoC 2>&1)
-          EXIT=$?
+          POC_EXIT=$?
           echo "$OUTPUT"
-          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
-          echo "## SymlinkEscape PoC Output" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "## PoC Output" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "$OUTPUT" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "$OUTPUT" | grep -q "EXPLOIT CONFIRMED" && echo "✅ EXPLOIT CONFIRMED found in output" || echo "⚠️  EXPLOIT CONFIRMED not found"
+
+          # Verify each stage printed its success marker.
+          # The workflow fails hard if any stage is missing from output.
+          FAIL=0
+          for MARKER in \
+            "Stage 1 PASS" \
+            "Stage 2 PASS" \
+            "Stage 3 PASS" \
+            "Stage 4 PASS"; do
+            if echo "$OUTPUT" | grep -qF "$MARKER"; then
+              echo "::notice::$MARKER found"
+            else
+              echo "::error::MISSING: $MARKER"
+              FAIL=1
+            fi
+          done
+
+          echo "## Stage verification" >> "$GITHUB_STEP_SUMMARY"
+          for MARKER in "Stage 1 PASS" "Stage 2 PASS" "Stage 3 PASS" "Stage 4 PASS"; do
+            if echo "$OUTPUT" | grep -qF "$MARKER"; then
+              echo "- ✅ $MARKER" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "- ❌ MISSING: $MARKER" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+
+          if [ $POC_EXIT -ne 0 ]; then
+            echo "::error::PoC binary exited with code $POC_EXIT"
+            FAIL=1
+          fi
+
+          exit $FAIL
+
+      - name: Artifact — raw PoC output
+        if: always()
+        run: |
+          .build/debug/SymlinkEscapePoC > /tmp/poc-output.txt 2>&1 || true
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: poc-output-${{ github.run_number }}
+          path: /tmp/poc-output.txt
+          retention-days: 90
