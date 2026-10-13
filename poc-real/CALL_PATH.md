@@ -36,8 +36,11 @@ Steps 1–3 (CLI → gRPC → vminitd) are verified by static analysis.
 - CI workflow: `.github/workflows/poc-symlink-escape.yml`
 
 ## CI runs (hardened workflow — stage marker + exit-code enforcement)
+Both runs are on the hardened workflow (stage-marker verification, exit-code enforcement, artifact upload).
+The pre-hardening run #38264650576 (2026-10-12, commit 5c56d70) is superseded and excluded.
+
 | Run | Commit | Date | Platform | Result |
 |-----|--------|------|----------|--------|
-| #38264650576 | 5c56d70 | 2026-10-12 | macOS 15 arm64 | ✅ All 4 stages PASS |
 | #38340497557 | 148fdb5 | 2026-10-13 | macOS 15 arm64 | ✅ All 4 stages PASS |
+| #38340911070 | a5bc7e5 | 2026-10-13 | macOS 15 arm64 | ✅ All 4 stages PASS |
 
